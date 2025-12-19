@@ -8,6 +8,9 @@ import pandas as pd
 import logging
 import time
 from datetime import datetime, timedelta, timezone
+import yaml
+import sys
+import json
 from typing import List
 
 # Configure logging
@@ -217,21 +220,33 @@ def main():
     """Main execution function."""
     logger.info("Starting Bitcoin historical data collection...")
     
+    # Load Config
+    config = {}
+    if os.path.exists("config.yaml"):
+        with open("config.yaml", "r") as f:
+            config = yaml.safe_load(f)
+    
+    symbol = config.get('params', {}).get('symbol', 'BTCUSDT')
+    output_path = config.get('paths', {}).get('historical_data', OUTPUT_CSV)
+    
     try:
         # Fetch 6 months of BTC/USDT 1-minute data
-        df = paginate_6_months(symbol="BTCUSDT", interval="1m")
+        df = paginate_6_months(symbol=symbol, interval="1m")
         
         if df.empty:
-            logger.error("No data fetched. Exiting.")
+            msg = "No data fetched from Binance API. Check internet connection or API availability."
+            logger.error(msg)
+            print(f"CRITICAL ERROR: {msg}", file=sys.stderr)
             return
         
         # Save to CSV with integrity checks
-        save_csv(df, OUTPUT_CSV)
+        save_csv(df, output_path)
         
         logger.info("Data collection completed successfully!")
         
     except Exception as e:
         logger.error(f"Error during data collection: {e}", exc_info=True)
+        print(f"CRITICAL FATAL ERROR: {str(e)}", file=sys.stderr)
         raise
 
 
