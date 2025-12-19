@@ -63,9 +63,43 @@ def update_status(status, progress, message, detail=""):
             }, f)
     except: pass
 
+def cleanup_data(config: Dict):
+    """Delete all data and models for a fresh start."""
+    # Files to delete
+    paths = config.get('paths', {})
+    files = [
+        paths.get('historical_data', 'btc_historical.csv'),
+        paths.get('dataset', 'btc_dataset.csv'),
+        paths.get('live_candles', 'btc_live_candles.csv'),
+        "btc_trades_live.csv",
+        "btc_features.csv",
+        "btc_features_normalized.csv",
+        "scalers.pkl",
+        os.path.join("reports", "metrics.csv"),
+        os.path.join("reports", "backtest_summary.csv")
+    ]
+    
+    for f in files:
+        if os.path.exists(f):
+            try: os.remove(f)
+            except: pass
+
+    # Models directory
+    models_dir = paths.get('models_dir', 'models')
+    if os.path.exists(models_dir):
+        try:
+            import shutil
+            shutil.rmtree(models_dir)
+        except: pass
+
 def run_setup_sequence(config: Dict):
     """Run all setup steps in order, updating status."""
     try:
+        # 0. Cleanup for Fresh Start
+        if config.get('params', {}).get('fresh_start', False):
+            update_status("running", 0.05, "Cleaning up old data", "Deleting previous CSVs and Models...")
+            cleanup_data(config)
+
         # 1. Historical Data
         dataset_path = config.get('paths', {}).get('dataset', 'btc_dataset.csv')
         if not os.path.exists(dataset_path):

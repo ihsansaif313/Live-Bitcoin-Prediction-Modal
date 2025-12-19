@@ -11,4 +11,4 @@ params:
   interval: "1m"
   retrain_interval_minutes: 60
   dashboard_port: 8501
-  fresh_start: false
+  fresh_start: True
