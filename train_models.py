@@ -352,6 +352,19 @@ def save_best(baseline_models, deep_models, metrics_df):
             with open(os.path.join(MODELS_DIR, "btc_model_cls.pkl"), 'wb') as f:
                 pickle.dump(baseline_models[best_cls_name], f)
 
+    # ALWAYS Save Baseline Backups (Safety Net)
+    # This prevents dashboard crashes if DL models fail to load/predict
+    if 'RF_Reg' in baseline_models:
+        with open(os.path.join(MODELS_DIR, "btc_model_reg_baseline.pkl"), 'wb') as f:
+            pickle.dump(baseline_models['RF_Reg'], f)
+    
+    if 'XGB_Cls' in baseline_models:
+        with open(os.path.join(MODELS_DIR, "btc_model_cls_baseline.pkl"), 'wb') as f:
+            pickle.dump(baseline_models['XGB_Cls'], f)
+    if 'LR_Cls' in baseline_models and 'XGB_Cls' not in baseline_models: # Fallback if XGB failed
+         with open(os.path.join(MODELS_DIR, "btc_model_cls_baseline.pkl"), 'wb') as f:
+            pickle.dump(baseline_models['LR_Cls'], f)
+
 def main():
     if not os.path.exists(MODELS_DIR): os.makedirs(MODELS_DIR)
     if not os.path.exists(REPORTS_DIR): os.makedirs(REPORTS_DIR)

@@ -8381,3 +8381,889 @@ For `use_container_width=True`, use `width='stretch'`. For `use_container_width=
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:54:03,572 - INFO - Creating features...
+2025-12-19 22:54:03,599 - INFO - Creating features...
+2025-12-19 22:54:03,614 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:03,626 - INFO - Creating features...
+2025-12-19 22:54:03,675 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:03,679 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:03,694 - INFO - Creating features...
+2025-12-19 22:54:03,905 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:05.012 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:54:05.035 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:54:12,818 - INFO - Creating features...
+2025-12-19 22:54:12,825 - INFO - Creating features...
+2025-12-19 22:54:12,874 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:12,879 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:12,882 - INFO - Creating features...
+2025-12-19 22:54:12,888 - INFO - Creating features...
+2025-12-19 22:54:12,926 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:12,946 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:13.562 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:54:13.824 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:54:25,883 - INFO - Creating features...
+2025-12-19 22:54:25,906 - INFO - Creating features...
+2025-12-19 22:54:25,932 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:25,948 - INFO - Creating features...
+2025-12-19 22:54:25,965 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:25,990 - INFO - Creating features...
+2025-12-19 22:54:26,009 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:26,069 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:26.788 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:54:27.052 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:54:33,867 - INFO - Creating features...
+2025-12-19 22:54:33,879 - INFO - Creating features...
+2025-12-19 22:54:33,908 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:33,918 - INFO - Creating features...
+2025-12-19 22:54:33,925 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:33,932 - INFO - Creating features...
+2025-12-19 22:54:33,962 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:33,993 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:35.488 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:54:36.026 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:54:42,909 - INFO - Creating features...
+2025-12-19 22:54:42,915 - INFO - Creating features...
+2025-12-19 22:54:42,926 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:42,930 - INFO - Creating features...
+2025-12-19 22:54:42,940 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:42,940 - INFO - Creating features...
+2025-12-19 22:54:42,965 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:42,983 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:43.585 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:54:43.589 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:54:53,818 - INFO - Creating features...
+2025-12-19 22:54:53,829 - INFO - Creating features...
+2025-12-19 22:54:53,886 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:53,904 - INFO - Creating features...
+2025-12-19 22:54:53,915 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:53,931 - INFO - Creating features...
+2025-12-19 22:54:53,971 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:54,038 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:55.040 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:54:55.285 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:55:02,050 - INFO - Creating features...
+2025-12-19 22:55:02,058 - INFO - Creating features...
+2025-12-19 22:55:02,092 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:02,101 - INFO - Creating features...
+2025-12-19 22:55:02,114 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:02,126 - INFO - Creating features...
+2025-12-19 22:55:02,167 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:02,200 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:02.874 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:55:03.011 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:55:15,967 - INFO - Creating features...
+2025-12-19 22:55:15,983 - INFO - Creating features...
+2025-12-19 22:55:16,016 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:16,029 - INFO - Creating features...
+2025-12-19 22:55:16,043 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:16,051 - INFO - Creating features...
+2025-12-19 22:55:16,093 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:16,143 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:18.890 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:55:19.441 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:55:28,868 - INFO - Creating features...
+2025-12-19 22:55:28,885 - INFO - Creating features...
+2025-12-19 22:55:28,916 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:28,929 - INFO - Creating features...
+2025-12-19 22:55:28,940 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:28,948 - INFO - Creating features...
+2025-12-19 22:55:28,981 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:29,016 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:29.971 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:55:29.974 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:55:36,101 - INFO - Creating features...
+2025-12-19 22:55:36,110 - INFO - Creating features...
+2025-12-19 22:55:36,139 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:36,147 - INFO - Creating features...
+2025-12-19 22:55:36,162 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:36,169 - INFO - Creating features...
+2025-12-19 22:55:36,185 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:36,211 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:36.748 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:55:36.918 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:55:43,566 - INFO - Creating features...
+2025-12-19 22:55:43,596 - INFO - Creating features...
+2025-12-19 22:55:43,649 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:43,658 - INFO - Creating features...
+2025-12-19 22:55:43,668 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:43,701 - INFO - Creating features...
+2025-12-19 22:55:43,738 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:43,977 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:45.932 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:55:46.038 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:55:54,001 - INFO - Creating features...
+2025-12-19 22:55:54,016 - INFO - Creating features...
+2025-12-19 22:55:54,081 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:54,093 - INFO - Creating features...
+2025-12-19 22:55:54,102 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:54,140 - INFO - Creating features...
+2025-12-19 22:55:54,194 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:54,214 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:54.775 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:55:54.809 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:01,884 - INFO - Creating features...
+2025-12-19 22:56:01,895 - INFO - Creating features...
+2025-12-19 22:56:01,930 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:01,940 - INFO - Creating features...
+2025-12-19 22:56:01,940 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:01,947 - INFO - Creating features...
+2025-12-19 22:56:01,967 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:01,990 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:02.389 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:02.485 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:07,832 - INFO - Creating features...
+2025-12-19 22:56:07,876 - INFO - Creating features...
+2025-12-19 22:56:07,882 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:07,890 - INFO - Creating features...
+2025-12-19 22:56:07,948 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:07,948 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:07,977 - INFO - Creating features...
+2025-12-19 22:56:08,034 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:08.486 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:08.644 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:14,421 - INFO - Creating features...
+2025-12-19 22:56:14,436 - INFO - Creating features...
+2025-12-19 22:56:14,472 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:14,478 - INFO - Creating features...
+2025-12-19 22:56:14,490 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:14,501 - INFO - Creating features...
+2025-12-19 22:56:14,520 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:14,591 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:15.180 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:15.292 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:22,821 - INFO - Creating features...
+2025-12-19 22:56:22,837 - INFO - Creating features...
+2025-12-19 22:56:22,863 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:22,869 - INFO - Creating features...
+2025-12-19 22:56:22,884 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:22,890 - INFO - Creating features...
+2025-12-19 22:56:22,922 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:22,967 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:24.185 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:24.228 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:31,917 - INFO - Creating features...
+2025-12-19 22:56:31,917 - INFO - Creating features...
+2025-12-19 22:56:31,965 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:31,965 - INFO - Creating features...
+2025-12-19 22:56:31,975 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:31,981 - INFO - Creating features...
+2025-12-19 22:56:32,044 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:32,078 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:32.764 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:32.791 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:40,677 - INFO - Creating features...
+2025-12-19 22:56:40,690 - INFO - Creating features...
+2025-12-19 22:56:40,710 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:40,717 - INFO - Creating features...
+2025-12-19 22:56:40,734 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:40,742 - INFO - Creating features...
+2025-12-19 22:56:40,754 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:40,807 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:41.246 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:41.396 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:49,648 - INFO - Creating features...
+2025-12-19 22:56:49,662 - INFO - Creating features...
+2025-12-19 22:56:49,722 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:49,770 - INFO - Creating features...
+2025-12-19 22:56:49,771 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:49,781 - INFO - Creating features...
+2025-12-19 22:56:49,822 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:49,889 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:50.753 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:50.869 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:56:56,797 - INFO - Creating features...
+2025-12-19 22:56:56,827 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:56,827 - INFO - Creating features...
+2025-12-19 22:56:56,833 - INFO - Creating features...
+2025-12-19 22:56:56,866 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:56,890 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:56,894 - INFO - Creating features...
+2025-12-19 22:56:57,008 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:56:57.773 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:56:57.835 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:05,136 - INFO - Creating features...
+2025-12-19 22:57:05,152 - INFO - Creating features...
+2025-12-19 22:57:05,197 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:05,210 - INFO - Creating features...
+2025-12-19 22:57:05,218 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:05,240 - INFO - Creating features...
+2025-12-19 22:57:05,259 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:05,437 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:05.936 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:06.068 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:11,803 - INFO - Creating features...
+2025-12-19 22:57:11,811 - INFO - Creating features...
+2025-12-19 22:57:11,825 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:11,830 - INFO - Creating features...
+2025-12-19 22:57:11,852 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:11,861 - INFO - Creating features...
+2025-12-19 22:57:11,865 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:11,896 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:12.351 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:12.480 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:18,669 - INFO - Creating features...
+2025-12-19 22:57:18,672 - INFO - Creating features...
+2025-12-19 22:57:18,704 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:18,737 - INFO - Creating features...
+2025-12-19 22:57:18,770 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:18,793 - INFO - Creating features...
+2025-12-19 22:57:18,805 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:18,877 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:19.292 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:19.430 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:24,293 - INFO - Creating features...
+2025-12-19 22:57:24,300 - INFO - Creating features...
+2025-12-19 22:57:24,337 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:24,342 - INFO - Creating features...
+2025-12-19 22:57:24,360 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:24,374 - INFO - Creating features...
+2025-12-19 22:57:24,394 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:24,445 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:25.190 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:25.217 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:33,824 - INFO - Creating features...
+2025-12-19 22:57:33,840 - INFO - Creating features...
+2025-12-19 22:57:33,865 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:33,875 - INFO - Creating features...
+2025-12-19 22:57:33,902 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:33,919 - INFO - Creating features...
+2025-12-19 22:57:33,941 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:33,998 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:34.805 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:34.979 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:41,544 - INFO - Creating features...
+2025-12-19 22:57:41,550 - INFO - Creating features...
+2025-12-19 22:57:41,574 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:41,577 - INFO - Creating features...
+2025-12-19 22:57:41,590 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:41,601 - INFO - Creating features...
+2025-12-19 22:57:41,620 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:41,648 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:42.275 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:42.427 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:48,242 - INFO - Creating features...
+2025-12-19 22:57:48,255 - INFO - Creating features...
+2025-12-19 22:57:48,280 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:48,290 - INFO - Creating features...
+2025-12-19 22:57:48,296 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:48,309 - INFO - Creating features...
+2025-12-19 22:57:48,349 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:48,349 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:48.887 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:48.980 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:54,166 - INFO - Creating features...
+2025-12-19 22:57:54,185 - INFO - Creating features...
+2025-12-19 22:57:54,206 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:54,219 - INFO - Creating features...
+2025-12-19 22:57:54,246 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:54,256 - INFO - Creating features...
+2025-12-19 22:57:54,276 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:54,315 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:54.766 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:54.857 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:57:59,431 - INFO - Creating features...
+2025-12-19 22:57:59,446 - INFO - Creating features...
+2025-12-19 22:57:59,456 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:59,470 - INFO - Creating features...
+2025-12-19 22:57:59,517 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:59,517 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:59,517 - INFO - Creating features...
+2025-12-19 22:57:59,559 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:59.866 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:57:59.972 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:04,892 - INFO - Creating features...
+2025-12-19 22:58:04,899 - INFO - Creating features...
+2025-12-19 22:58:04,927 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:04,934 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:04,939 - INFO - Creating features...
+2025-12-19 22:58:04,943 - INFO - Creating features...
+2025-12-19 22:58:05,081 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:05,142 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:05.741 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:05.867 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:10,769 - INFO - Creating features...
+2025-12-19 22:58:10,774 - INFO - Creating features...
+2025-12-19 22:58:10,795 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:10,801 - INFO - Creating features...
+2025-12-19 22:58:10,814 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:10,827 - INFO - Creating features...
+2025-12-19 22:58:10,846 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:10,853 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:11.302 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:11.308 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:16,941 - INFO - Creating features...
+2025-12-19 22:58:16,948 - INFO - Creating features...
+2025-12-19 22:58:16,984 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:16,985 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:16,985 - INFO - Creating features...
+2025-12-19 22:58:16,992 - INFO - Creating features...
+2025-12-19 22:58:17,019 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:17,030 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:17.335 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:17.442 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:24,948 - INFO - Creating features...
+2025-12-19 22:58:24,958 - INFO - Creating features...
+2025-12-19 22:58:24,971 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:24,979 - INFO - Creating features...
+2025-12-19 22:58:24,993 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:24,997 - INFO - Creating features...
+2025-12-19 22:58:25,030 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:25,049 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:25.486 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:25.618 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:31,226 - INFO - Creating features...
+2025-12-19 22:58:31,232 - INFO - Creating features...
+2025-12-19 22:58:31,261 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:31,266 - INFO - Creating features...
+2025-12-19 22:58:31,282 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:31,302 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:31,309 - INFO - Creating features...
+2025-12-19 22:58:31,330 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:31.940 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:32.037 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:38,616 - INFO - Creating features...
+2025-12-19 22:58:38,642 - INFO - Creating features...
+2025-12-19 22:58:38,779 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:38,786 - INFO - Creating features...
+2025-12-19 22:58:38,843 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:38,846 - INFO - Creating features...
+2025-12-19 22:58:38,860 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:38,891 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:39.400 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:39.414 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:45,084 - INFO - Creating features...
+2025-12-19 22:58:45,088 - INFO - Creating features...
+2025-12-19 22:58:45,110 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:45,111 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:45,116 - INFO - Creating features...
+2025-12-19 22:58:45,121 - INFO - Creating features...
+2025-12-19 22:58:45,139 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:45,155 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:45.571 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:45.690 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:51,404 - INFO - Creating features...
+2025-12-19 22:58:51,419 - INFO - Creating features...
+2025-12-19 22:58:51,448 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:51,456 - INFO - Creating features...
+2025-12-19 22:58:51,466 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:51,473 - INFO - Creating features...
+2025-12-19 22:58:51,498 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:51,537 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:51.990 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:58:52.026 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:58:58,797 - INFO - Creating features...
+2025-12-19 22:58:58,811 - INFO - Creating features...
+2025-12-19 22:58:58,867 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:58,881 - INFO - Creating features...
+2025-12-19 22:58:58,899 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:58,911 - INFO - Creating features...
+2025-12-19 22:58:58,980 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:59,004 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:58:59.995 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:59:00.026 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:59:32,811 - INFO - Creating features...
+2025-12-19 22:59:32,847 - INFO - Creating features...
+2025-12-19 22:59:33,407 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:59:33,698 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:59:33,720 - INFO - Creating features...
+2025-12-19 22:59:33,856 - INFO - Creating features...
+2025-12-19 22:59:34,345 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:59:34,660 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:59:39.497 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:59:39.533 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 23:00:03,445 - INFO - Creating features...
+2025-12-19 23:00:03,469 - INFO - Creating features...
+2025-12-19 23:00:03,547 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:00:03,548 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:00:03,560 - INFO - Creating features...
+2025-12-19 23:00:03,562 - INFO - Creating features...
+2025-12-19 23:00:03,593 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:00:03,624 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:00:05.306 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 23:00:05.389 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.100.7:8501
+

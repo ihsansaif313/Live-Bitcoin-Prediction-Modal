@@ -135,3 +135,31 @@
 2025-12-19 22:51:08,110 - INFO - Websocket connected
 2025-12-19 22:51:08,111 - INFO - WebSocket connection established
 2025-12-19 22:52:07,724 - INFO - Trades received in last minute: 6847
+2025-12-19 22:53:07,957 - INFO - Trades received in last minute: 6423
+2025-12-19 22:54:08,070 - INFO - Trades received in last minute: 6228
+2025-12-19 22:55:08,221 - INFO - Trades received in last minute: 6356
+2025-12-19 22:56:08,265 - INFO - Trades received in last minute: 7630
+2025-12-19 22:57:09,218 - INFO - Trades received in last minute: 7505
+2025-12-19 22:58:09,251 - INFO - Trades received in last minute: 5102
+2025-12-19 22:59:09,254 - INFO - Trades received in last minute: 7011
+2025-12-19 23:00:09,432 - INFO - Trades received in last minute: 8273
+2025-12-19 23:01:09,686 - INFO - Trades received in last minute: 8164
+2025-12-19 23:02:10,090 - INFO - Trades received in last minute: 9126
+2025-12-19 23:02:55,037 - ERROR - WebSocket error: Connection to remote host was lost.
+2025-12-19 23:02:55,037 - ERROR - Connection to remote host was lost. - goodbye
+2025-12-19 23:02:55,039 - WARNING - WebSocket closed: None - None
+2025-12-19 23:02:55,046 - WARNING - Connection lost. Reconnecting in 1s (attempt 1)...
+2025-12-19 23:02:56,054 - INFO - Connecting to wss://stream.binance.com:9443/ws/btcusdt@trade...
+2025-12-19 23:02:57,365 - INFO - Websocket connected
+2025-12-19 23:02:57,365 - INFO - WebSocket connection established
+2025-12-19 23:03:10,680 - INFO - Trades received in last minute: 13210
+2025-12-19 23:04:11,096 - INFO - Trades received in last minute: 5503
+2025-12-19 23:05:11,335 - INFO - Trades received in last minute: 6779
+2025-12-19 23:07:01,042 - INFO - Starting Bitcoin live trade streaming...
+2025-12-19 23:07:01,042 - INFO - Output file: btc_trades_live.csv
+2025-12-19 23:07:01,042 - INFO - Batch interval: 0.5s
+2025-12-19 23:07:01,042 - INFO - Press Ctrl+C to stop
+2025-12-19 23:07:01,052 - INFO - Batch writer thread started
+2025-12-19 23:07:01,052 - INFO - Connecting to wss://stream.binance.com:9443/ws/btcusdt@trade...
+2025-12-19 23:07:03,054 - INFO - Websocket connected
+2025-12-19 23:07:03,054 - INFO - WebSocket connection established

@@ -316,3 +316,69 @@ C:\Users\ihsan\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\s
 2025-12-19 22:52:35,740 - INFO - Creating features...
 2025-12-19 22:52:36,050 - INFO - Features created with 249 missing values (expected due to lag/rolling)
 2025-12-19 22:52:49,186 - INFO - Updated features file
+2025-12-19 22:53:51,050 - INFO - Found 1 new candles
+2025-12-19 22:53:51,052 - INFO - Regenerating features for latest data...
+2025-12-19 22:53:53,282 - INFO - Creating features...
+2025-12-19 22:53:53,838 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:54:14,803 - INFO - Updated features file
+2025-12-19 22:55:19,614 - INFO - Found 1 new candles
+2025-12-19 22:55:19,628 - INFO - Regenerating features for latest data...
+2025-12-19 22:55:22,407 - INFO - Creating features...
+2025-12-19 22:55:23,257 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:55:23,381 - ERROR - Loop error: [Errno 22] Invalid argument: 'btc_features_normalized.csv'
+Traceback (most recent call last):
+  File "D:\Live Bitcoin Prediction Modal\continuous_learning.py", line 227, in run
+    self.update_dataset_and_features(new_candles)
+  File "D:\Live Bitcoin Prediction Modal\continuous_learning.py", line 130, in update_dataset_and_features
+    normalized_data.to_csv(FEATURES_CSV, index=False)
+  File "C:\Users\ihsan\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ihsan\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\generic.py", line 3989, in to_csv
+    return DataFrameRenderer(formatter).to_csv(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ihsan\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\io\formats\format.py", line 1014, in to_csv
+    csv_formatter.save()
+  File "C:\Users\ihsan\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\io\formats\csvs.py", line 251, in save
+    with get_handle(
+         ^^^^^^^^^^^
+  File "C:\Users\ihsan\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\io\common.py", line 873, in get_handle
+    handle = open(
+             ^^^^^
+OSError: [Errno 22] Invalid argument: 'btc_features_normalized.csv'
+2025-12-19 22:57:23,663 - INFO - Found 1 new candles
+2025-12-19 22:57:23,673 - INFO - Regenerating features for latest data...
+2025-12-19 22:57:25,526 - INFO - Creating features...
+2025-12-19 22:57:26,465 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:57:49,557 - INFO - Updated features file
+2025-12-19 22:59:52,448 - INFO - Found 1 new candles
+2025-12-19 22:59:52,459 - INFO - Regenerating features for latest data...
+2025-12-19 23:00:00,037 - INFO - Creating features...
+2025-12-19 23:00:02,535 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:00:35,022 - INFO - Updated features file
+2025-12-19 23:01:38,326 - INFO - Found 2 new candles
+2025-12-19 23:01:38,329 - INFO - Regenerating features for latest data...
+2025-12-19 23:01:40,140 - INFO - Creating features...
+2025-12-19 23:01:40,621 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:01:59,786 - INFO - Updated features file
+2025-12-19 23:03:02,414 - INFO - Found 1 new candles
+2025-12-19 23:03:02,421 - INFO - Regenerating features for latest data...
+2025-12-19 23:03:03,846 - INFO - Creating features...
+2025-12-19 23:03:04,226 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:03:19,196 - INFO - Updated features file
+2025-12-19 23:05:20,935 - INFO - Found 1 new candles
+2025-12-19 23:05:20,936 - INFO - Regenerating features for latest data...
+2025-12-19 23:05:22,060 - INFO - Creating features...
+2025-12-19 23:05:22,366 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 23:05:33,755 - INFO - Updated features file
+2025-12-19 23:07:17.606762: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-12-19 23:07:30.108441: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+C:\Users\ihsan\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\export\tf2onnx_lib.py:8: FutureWarning: In the future `np.object` will be defined as the corresponding NumPy scalar.
+  if not hasattr(np, "object"):
+2025-12-19 23:07:32,741 - INFO - No GPU detected. Using CPU for training.
+[NOTE] TensorFlow > 2.10 on native Windows is CPU-only by design. To enable GPU, use WSL2 or downgrade to TF 2.10 (only checks if you have a compatible NVIDIA GPU).
+2025-12-19 23:07:32,748 - INFO - Starting Continuous Learning Service...
+2025-12-19 23:07:35,002 - INFO - Found 1 new candles
+2025-12-19 23:07:35,025 - INFO - Regenerating features for latest data...
+2025-12-19 23:07:36,598 - INFO - Creating features...
+2025-12-19 23:07:36,930 - INFO - Features created with 249 missing values (expected due to lag/rolling)
