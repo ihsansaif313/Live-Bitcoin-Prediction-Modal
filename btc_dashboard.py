@@ -93,26 +93,39 @@ def load_models():
         
         # Helper to load model
         def load_specific_model(type_name, filename_base):
-            # Try .h5 (Deep Learning) first
+            # 1. Try .h5 (Deep Learning) first
             h5_path = os.path.join(MODELS_DIR, f"{filename_base}.h5")
             if os.path.exists(h5_path):
                 try:
                     import tensorflow as tf
-                    # Try loading with compile=False first (safer for inference)
+                    from tensorflow.keras.layers import LayerNormalization, MultiHeadAttention
+                    
+                    custom_objects = {
+                        'LayerNormalization': LayerNormalization,
+                        'MultiHeadAttention': MultiHeadAttention
+                    }
+
+                    # Try loading with compile=False and custom_objects
                     try:
-                        return tf.keras.models.load_model(h5_path, compile=False)
-                    except TypeError:
-                        # Fallback: some versions might complain about arguments or signature
-                        # Try loading with default arguments
-                        return tf.keras.models.load_model(h5_path)
+                        return tf.keras.models.load_model(h5_path, custom_objects=custom_objects, compile=False)
+                    except (TypeError, ValueError):
+                        # Fallback 1: Try default load with custom_objects
+                        return tf.keras.models.load_model(h5_path, custom_objects=custom_objects)
                 except Exception as e:
                     st.warning(f"Found {h5_path} but failed to load: {e}")
-                    # Don't return None yet, as we might have a backup .pkl (though unlikely if best was h5)
             
-            # Try .pkl (Baseline) - Checked if h5 missing OR failed
+            # 2. Try .pkl (Standard Best Model)
             pkl_path = os.path.join(MODELS_DIR, f"{filename_base}.pkl")
             if os.path.exists(pkl_path):
                 with open(pkl_path, 'rb') as f:
+                    return pickle.load(f)
+
+            # 3. Tertiary Fallback: Look for explicit baseline backup
+            # This is created by the updated train_models.py
+            baseline_path = os.path.join(MODELS_DIR, f"{filename_base}_baseline.pkl")
+            if os.path.exists(baseline_path):
+                with open(baseline_path, 'rb') as f:
+                    # st.info(f"Using fallback baseline model for {type_name}") # Optional info
                     return pickle.load(f)
             
             return None

@@ -8337,3 +8337,47 @@ For `use_container_width=True`, use `width='stretch'`. For `use_container_width=
 `use_container_width` will be removed after 2025-12-31.
 
 For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:53:47,065 - INFO - Creating features...
+2025-12-19 22:53:47,080 - INFO - Creating features...
+2025-12-19 22:53:47,137 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:47,142 - INFO - Creating features...
+2025-12-19 22:53:47,192 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:47,212 - INFO - Creating features...
+2025-12-19 22:53:47,232 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:47,260 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:47.881 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:53:47.887 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+D:\Live Bitcoin Prediction Modal\btc_dashboard.py:69: DtypeWarning:
+
+Columns (0,1,2,3,5) have mixed types. Specify dtype option on import or set low_memory=False.
+
+2025-12-19 22:53:53,880 - INFO - Creating features...
+2025-12-19 22:53:53,894 - INFO - Creating features...
+2025-12-19 22:53:53,936 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:53,943 - INFO - Creating features...
+2025-12-19 22:53:53,971 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:53,988 - INFO - Creating features...
+2025-12-19 22:53:54,003 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:54,047 - INFO - Features created with 249 missing values (expected due to lag/rolling)
+2025-12-19 22:53:54.567 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.
+2025-12-19 22:53:54.800 Please replace `use_container_width` with `width`.
+
+`use_container_width` will be removed after 2025-12-31.
+
+For `use_container_width=True`, use `width='stretch'`. For `use_container_width=False`, use `width='content'`.

@@ -35387,3 +35387,139 @@
 2025-12-19 22:53:41,435 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
 2025-12-19 22:53:41,436 - DEBUG - Total minutes in data: 1
 2025-12-19 22:53:41,437 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:41,939 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:42,490 - DEBUG - Read 141079 rows from CSV
+2025-12-19 22:53:42,652 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:41.091000+00:00
+2025-12-19 22:53:42,662 - DEBUG - Filtered to 0 trades after 2025-12-19 17:53:41.091000+00:00
+2025-12-19 22:53:42,662 - DEBUG - Loaded 0 new trades
+2025-12-19 22:53:43,180 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:44,265 - DEBUG - Read 141171 rows from CSV
+2025-12-19 22:53:44,425 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:41.091000+00:00
+2025-12-19 22:53:44,432 - DEBUG - Filtered to 92 trades after 2025-12-19 17:53:41.091000+00:00
+2025-12-19 22:53:44,432 - DEBUG - Loaded 92 new trades
+2025-12-19 22:53:44,435 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:44,436 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:44,437 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:44,938 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:45,460 - DEBUG - Read 141245 rows from CSV
+2025-12-19 22:53:45,571 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:43.320000+00:00
+2025-12-19 22:53:45,577 - DEBUG - Filtered to 74 trades after 2025-12-19 17:53:43.320000+00:00
+2025-12-19 22:53:45,577 - DEBUG - Loaded 74 new trades
+2025-12-19 22:53:45,579 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:45,579 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:45,581 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:46,093 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:46,706 - DEBUG - Read 141471 rows from CSV
+2025-12-19 22:53:46,941 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:44.820000+00:00
+2025-12-19 22:53:46,944 - DEBUG - Filtered to 226 trades after 2025-12-19 17:53:44.820000+00:00
+2025-12-19 22:53:46,944 - DEBUG - Loaded 226 new trades
+2025-12-19 22:53:46,946 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:46,947 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:46,948 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:47,456 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:47,711 - DEBUG - Read 141580 rows from CSV
+2025-12-19 22:53:47,856 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:45.685000+00:00
+2025-12-19 22:53:47,866 - DEBUG - Filtered to 104 trades after 2025-12-19 17:53:45.685000+00:00
+2025-12-19 22:53:47,866 - DEBUG - Loaded 104 new trades
+2025-12-19 22:53:47,873 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:47,873 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:47,873 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:48,376 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:48,582 - DEBUG - Read 141618 rows from CSV
+2025-12-19 22:53:48,626 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:46.789000+00:00
+2025-12-19 22:53:48,626 - DEBUG - Filtered to 38 trades after 2025-12-19 17:53:46.789000+00:00
+2025-12-19 22:53:48,626 - DEBUG - Loaded 38 new trades
+2025-12-19 22:53:48,629 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:48,630 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:48,630 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:49,131 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:49,377 - DEBUG - Read 141679 rows from CSV
+2025-12-19 22:53:49,458 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:48.347000+00:00
+2025-12-19 22:53:49,459 - DEBUG - Filtered to 0 trades after 2025-12-19 17:53:48.347000+00:00
+2025-12-19 22:53:49,460 - DEBUG - Loaded 0 new trades
+2025-12-19 22:53:49,965 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:50,171 - DEBUG - Read 141712 rows from CSV
+2025-12-19 22:53:50,221 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:48.347000+00:00
+2025-12-19 22:53:50,224 - DEBUG - Filtered to 33 trades after 2025-12-19 17:53:48.347000+00:00
+2025-12-19 22:53:50,225 - DEBUG - Loaded 33 new trades
+2025-12-19 22:53:50,227 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:50,227 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:50,227 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:50,728 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:50,963 - DEBUG - Read 141867 rows from CSV
+2025-12-19 22:53:51,026 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:48.350000+00:00
+2025-12-19 22:53:51,026 - DEBUG - Filtered to 155 trades after 2025-12-19 17:53:48.350000+00:00
+2025-12-19 22:53:51,029 - DEBUG - Loaded 155 new trades
+2025-12-19 22:53:51,030 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:51,030 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:51,031 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:51,533 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:51,929 - DEBUG - Read 141967 rows from CSV
+2025-12-19 22:53:52,014 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:48.641000+00:00
+2025-12-19 22:53:52,018 - DEBUG - Filtered to 100 trades after 2025-12-19 17:53:48.641000+00:00
+2025-12-19 22:53:52,018 - DEBUG - Loaded 100 new trades
+2025-12-19 22:53:52,022 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:52,022 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:52,025 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:52,529 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:52,900 - DEBUG - Read 141996 rows from CSV
+2025-12-19 22:53:52,994 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:51.734000+00:00
+2025-12-19 22:53:52,997 - DEBUG - Filtered to 29 trades after 2025-12-19 17:53:51.734000+00:00
+2025-12-19 22:53:52,997 - DEBUG - Loaded 29 new trades
+2025-12-19 22:53:52,999 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:52,999 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:53,001 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:53,506 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:53,829 - DEBUG - Read 142147 rows from CSV
+2025-12-19 22:53:53,915 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:52.114000+00:00
+2025-12-19 22:53:53,923 - DEBUG - Filtered to 151 trades after 2025-12-19 17:53:52.114000+00:00
+2025-12-19 22:53:53,923 - DEBUG - Loaded 151 new trades
+2025-12-19 22:53:53,926 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:53,926 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:53,928 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:54,430 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:54,708 - DEBUG - Read 142275 rows from CSV
+2025-12-19 22:53:54,785 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:52.683000+00:00
+2025-12-19 22:53:54,787 - DEBUG - Filtered to 100 trades after 2025-12-19 17:53:52.683000+00:00
+2025-12-19 22:53:54,787 - DEBUG - Loaded 100 new trades
+2025-12-19 22:53:54,790 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:54,790 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:54,791 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:55,292 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:55,669 - DEBUG - Read 142365 rows from CSV
+2025-12-19 22:53:55,757 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:52.707000+00:00
+2025-12-19 22:53:55,757 - DEBUG - Filtered to 90 trades after 2025-12-19 17:53:52.707000+00:00
+2025-12-19 22:53:55,757 - DEBUG - Loaded 90 new trades
+2025-12-19 22:53:55,757 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:55,757 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:55,757 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:56,264 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:56,614 - DEBUG - Read 142543 rows from CSV
+2025-12-19 22:53:56,700 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:53.442000+00:00
+2025-12-19 22:53:56,704 - DEBUG - Filtered to 178 trades after 2025-12-19 17:53:53.442000+00:00
+2025-12-19 22:53:56,704 - DEBUG - Loaded 178 new trades
+2025-12-19 22:53:56,704 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:56,706 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:56,707 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:57,214 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:57,496 - DEBUG - Read 142745 rows from CSV
+2025-12-19 22:53:57,545 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:53.691000+00:00
+2025-12-19 22:53:57,547 - DEBUG - Filtered to 202 trades after 2025-12-19 17:53:53.691000+00:00
+2025-12-19 22:53:57,547 - DEBUG - Loaded 202 new trades
+2025-12-19 22:53:57,549 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:57,549 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:57,549 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:58,053 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:58,437 - DEBUG - Read 142884 rows from CSV
+2025-12-19 22:53:58,560 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:57.224000+00:00
+2025-12-19 22:53:58,566 - DEBUG - Filtered to 139 trades after 2025-12-19 17:53:57.224000+00:00
+2025-12-19 22:53:58,566 - DEBUG - Loaded 139 new trades
+2025-12-19 22:53:58,571 - DEBUG - Current minute: 2025-12-19 17:53:00+00:00
+2025-12-19 22:53:58,572 - DEBUG - Total minutes in data: 1
+2025-12-19 22:53:58,575 - DEBUG - No completed minutes to aggregate
+2025-12-19 22:53:59,109 - DEBUG - Reading btc_trades_live.csv...
+2025-12-19 22:53:59,576 - DEBUG - Read 142884 rows from CSV
+2025-12-19 22:53:59,701 - DEBUG - Converted time column, last_ts=2025-12-19 17:53:57.665000+00:00
+2025-12-19 22:53:59,704 - DEBUG - Filtered to 0 trades after 2025-12-19 17:53:57.665000+00:00
+2025-12-19 22:53:59,704 - DEBUG - Loaded 0 new trades
+2025-12-19 22:54:00,209 - DEBUG - Reading btc_trades_live.csv...
