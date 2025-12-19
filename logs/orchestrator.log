@@ -1,0 +1,77 @@
+2025-12-19 20:42:26,184 - INFO - Performing Fresh Start Cleanup...
+2025-12-19 20:42:26,188 - INFO - Deleted btc_historical.csv
+2025-12-19 20:42:26,188 - INFO - Deleted btc_dataset.csv
+2025-12-19 20:42:26,208 - INFO - Deleted btc_features.csv
+2025-12-19 20:42:26,227 - INFO - Deleted btc_features_normalized.csv
+2025-12-19 20:42:26,228 - INFO - Deleted scalers.pkl
+2025-12-19 20:42:26,241 - INFO - Deleted models
+2025-12-19 20:42:26,241 - INFO - Dataset not found. Starting initialization sequence...
+2025-12-19 20:42:26,242 - INFO - Running Step: Download Historical Data (historical_data.py)...
+2025-12-19 20:46:57,613 - INFO - Step Download Historical Data completed successfully.
+2025-12-19 20:46:57,614 - INFO - Running Step: Build Initial Dataset (build_dataset.py)...
+2025-12-19 20:47:18,763 - INFO - Step Build Initial Dataset completed successfully.
+2025-12-19 20:47:18,764 - INFO - Models not found. Starting initial training...
+2025-12-19 20:47:18,764 - INFO - Running Step: Train Initial Models (train_models.py)...
+2025-12-19 21:23:19,026 - INFO - Step Train Initial Models completed successfully.
+2025-12-19 21:23:19,027 - INFO - Starting Service: Live Stream
+2025-12-19 21:23:21,035 - INFO - Starting Service: Aggregator
+2025-12-19 21:23:21,064 - INFO - Starting Service: Continuous Learner
+2025-12-19 21:23:21,084 - INFO - Starting Service: Dashboard
+2025-12-19 21:23:21,104 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-19 21:30:08,456 - INFO - Shutdown signal received. Terminating processes...
+2025-12-19 21:30:08,459 - INFO - System shutdown complete.
+2025-12-19 21:30:10,834 - INFO - Starting Service: Dashboard
+2025-12-19 21:30:10,844 - INFO - Running Step: Train Initial Models (train_models.py)...
+2025-12-19 21:34:22,169 - ERROR - Step Train Initial Models failed with return code 3221225786
+2025-12-19 21:36:12,397 - INFO - Starting Service: Dashboard
+2025-12-19 21:36:13,408 - INFO - Setup finished. Starting backend services...
+2025-12-19 21:36:13,408 - INFO - Starting Service: Live Stream
+2025-12-19 21:36:15,417 - INFO - Starting Service: Aggregator
+2025-12-19 21:36:15,424 - INFO - Starting Service: Continuous Learner
+2025-12-19 21:36:15,434 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-19 21:38:09,194 - INFO - Shutdown signal received. Terminating processes...
+2025-12-19 21:38:09,197 - INFO - System shutdown complete.
+2025-12-19 21:38:11,351 - INFO - Starting Service: Dashboard
+2025-12-19 21:38:12,360 - INFO - Setup finished. Starting backend services...
+2025-12-19 21:38:12,360 - INFO - Starting Service: Live Stream
+2025-12-19 21:38:14,369 - INFO - Starting Service: Aggregator
+2025-12-19 21:38:14,384 - INFO - Starting Service: Continuous Learner
+2025-12-19 21:38:14,401 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-19 21:40:48,488 - INFO - Shutdown signal received. Terminating processes...
+2025-12-19 21:40:48,494 - INFO - System shutdown complete.
+2025-12-19 21:40:51,212 - INFO - Starting Service: Dashboard
+2025-12-19 21:40:52,222 - INFO - Setup finished. Starting backend services...
+2025-12-19 21:40:52,222 - INFO - Starting Service: Live Stream
+2025-12-19 21:40:54,230 - INFO - Starting Service: Aggregator
+2025-12-19 21:40:54,249 - INFO - Starting Service: Continuous Learner
+2025-12-19 21:40:54,261 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-19 21:41:54,094 - INFO - Shutdown signal received. Terminating processes...
+2025-12-19 21:41:54,096 - INFO - System shutdown complete.
+2025-12-19 21:42:21,484 - INFO - Starting Service: Dashboard
+2025-12-19 21:42:21,496 - INFO - Performing Fresh Start Cleanup...
+2025-12-19 21:42:21,502 - INFO - Deleted btc_historical.csv
+2025-12-19 21:42:21,507 - INFO - Deleted btc_dataset.csv
+2025-12-19 21:42:21,507 - INFO - Deleted btc_live_candles.csv
+2025-12-19 21:42:21,515 - INFO - Deleted btc_trades_live.csv
+2025-12-19 21:42:21,533 - INFO - Deleted btc_features.csv
+2025-12-19 21:42:21,555 - INFO - Deleted btc_features_normalized.csv
+2025-12-19 21:42:21,558 - INFO - Deleted scalers.pkl
+2025-12-19 21:42:21,558 - INFO - Deleted reports\metrics.csv
+2025-12-19 21:42:21,581 - INFO - Deleted models
+2025-12-19 21:42:21,582 - INFO - Running Step: Download Historical Data (historical_data.py)...
+2025-12-19 21:47:21,611 - INFO - Step Download Historical Data completed successfully.
+2025-12-19 21:47:21,614 - INFO - Running Step: Build Initial Dataset (build_dataset.py)...
+2025-12-19 21:47:45,569 - INFO - Step Build Initial Dataset completed successfully.
+2025-12-19 21:47:45,569 - INFO - Running Step: Train Initial Models (train_models.py)...
+2025-12-19 22:33:31,920 - INFO - Step Train Initial Models completed successfully.
+2025-12-19 22:33:31,976 - INFO - Setup finished. Starting backend services...
+2025-12-19 22:33:31,976 - INFO - Starting Service: Live Stream
+2025-12-19 22:33:33,984 - INFO - Starting Service: Aggregator
+2025-12-19 22:33:33,996 - INFO - Starting Service: Continuous Learner
+2025-12-19 22:33:34,010 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-19 22:51:04,969 - INFO - Starting Service: Dashboard
+2025-12-19 22:51:05,980 - INFO - Setup finished. Starting backend services...
+2025-12-19 22:51:05,980 - INFO - Starting Service: Live Stream
+2025-12-19 22:51:07,987 - INFO - Starting Service: Aggregator
+2025-12-19 22:51:07,996 - INFO - Starting Service: Continuous Learner
+2025-12-19 22:51:08,005 - INFO - All services started. Press Ctrl+C to shutdown.

@@ -1,0 +1,13 @@
+paths:
+  historical_data: "btc_historical.csv"
+  dataset: "btc_dataset.csv"
+  live_candles: "btc_live_candles.csv"
+  models_dir: "models"
+  logs_dir: "logs"
+
+params:
+  symbol: "BTCUSDT"
+  interval: "1m"
+  retrain_interval_minutes: 60
+  dashboard_port: 8501
+  fresh_start: false
