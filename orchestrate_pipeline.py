@@ -72,13 +72,16 @@ def start_process(cmd: List[str], name: str, log_file: str) -> subprocess.Popen:
     env = os.environ.copy()
     env["PYTHONUNBUFFERED"] = "1"
     
+    # creationflags is Windows-only. Use safe fallback for Linux/Streamlit Cloud
+    creationflags = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)
+    
     with open(log_file, "a") as f:
         p = subprocess.Popen(
             cmd,
             stdout=f,
             stderr=subprocess.STDOUT,
             cwd=os.getcwd(),
-            creationflags=subprocess.CREATE_NEW_CONSOLE,
+            creationflags=creationflags,
             env=env
         )
     return p
