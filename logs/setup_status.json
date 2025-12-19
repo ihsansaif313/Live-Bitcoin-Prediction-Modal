@@ -1,1 +1,1 @@
-{"status": "running", "progress": 0.4, "message": "Training Models", "detail": "Loading and preparing data..."}
+{"status": "complete", "progress": 1.0, "message": "Setup Complete", "detail": "Launching live services..."}

@@ -85,3 +85,65 @@
 2025-12-19 23:06:59,719 - INFO - Starting Service: Aggregator
 2025-12-19 23:06:59,803 - INFO - Starting Service: Continuous Learner
 2025-12-19 23:06:59,824 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-20 01:09:25,616 - INFO - Shutdown signal received. Terminating processes...
+2025-12-20 01:09:25,627 - INFO - System shutdown complete.
+2025-12-20 01:10:20,008 - INFO - Starting Service: Dashboard
+2025-12-20 01:10:21,016 - INFO - Setup finished. Starting backend services...
+2025-12-20 01:10:21,016 - INFO - Starting Service: Live Stream
+2025-12-20 01:10:23,024 - INFO - Starting Service: Aggregator
+2025-12-20 01:10:23,029 - INFO - Starting Service: Continuous Learner
+2025-12-20 01:10:23,037 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-20 02:38:33,462 - INFO - Shutdown signal received. Terminating processes...
+2025-12-20 02:38:33,482 - INFO - System shutdown complete.
+2025-12-20 02:39:04,366 - INFO - Starting Service: Dashboard
+2025-12-20 02:39:05,446 - INFO - Setup finished. Starting backend services...
+2025-12-20 02:39:05,446 - INFO - Starting Service: Live Stream
+2025-12-20 02:39:07,515 - INFO - Starting Service: Aggregator
+2025-12-20 02:39:07,536 - INFO - Starting Service: Continuous Learner
+2025-12-20 02:39:07,553 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-20 02:41:26,162 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:26,164 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:26,166 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:31,166 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:31,167 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:31,167 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:36,168 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:36,168 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:36,170 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:41,170 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:41,170 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:41,170 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:46,171 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:46,171 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:46,174 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:51,177 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:51,178 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:51,178 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:56,180 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:56,180 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:41:56,180 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:01,182 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:01,182 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:01,182 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:06,183 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:06,183 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:06,183 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:11,185 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:11,185 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:11,185 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:16,186 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:16,186 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:16,186 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:21,187 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'live_stream.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:21,187 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'aggregate_live_to_candles.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:21,187 - WARNING - Process ['C:\\Users\\ihsan\\AppData\\Local\\Programs\\Python\\Python312\\python.exe', 'continuous_learning.py'] exited unexpectedly with code 3221225786
+2025-12-20 02:42:24,259 - INFO - Shutdown signal received. Terminating processes...
+2025-12-20 02:42:24,259 - INFO - System shutdown complete.
+2025-12-20 02:42:41,745 - INFO - Starting Service: Dashboard
+2025-12-20 02:42:42,754 - INFO - Setup finished. Starting backend services...
+2025-12-20 02:42:42,754 - INFO - Starting Service: Live Stream
+2025-12-20 02:42:44,764 - INFO - Starting Service: Aggregator
+2025-12-20 02:42:44,782 - INFO - Starting Service: Continuous Learner
+2025-12-20 02:42:44,819 - INFO - All services started. Press Ctrl+C to shutdown.
+2025-12-20 02:51:14,625 - INFO - Shutdown signal received. Terminating processes...
+2025-12-20 02:51:14,625 - INFO - System shutdown complete.

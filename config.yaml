@@ -1,5 +1,6 @@
 paths:
   historical_data: "btc_historical.csv"
+  historical_data_clean: "btc_historical_clean.csv"
   dataset: "btc_dataset.csv"
   live_candles: "btc_live_candles.csv"
   models_dir: "models"

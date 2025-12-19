@@ -15,6 +15,7 @@ from typing import Dict, Any, Tuple
 
 # Re-use existing modules
 from build_dataset import make_features, fit_and_apply_scalers
+from data_cleaner import detect_outliers, remove_noise
 try:
     from train_models import train_baselines, train_deep_models, evaluate, make_sequences
 except ImportError:
@@ -82,6 +83,9 @@ class ContinuousLearner:
             
             if not new_data.empty:
                 logger.info(f"Found {len(new_data)} new candles")
+                # Apply Cleaning
+                new_data = detect_outliers(new_data)
+                new_data = remove_noise(new_data)
                 self.last_processed_time = new_data['timeOpen'].max()
                 
             return new_data
@@ -161,7 +165,7 @@ class ContinuousLearner:
             save_best(baselines, deep_models, metrics)
             
             # Copy best models to Current
-            for model_file in ["btc_model_reg.pkl", "btc_model_cls.pkl", "btc_model_reg.h5", "btc_model_cls.h5"]:
+            for model_file in ["btc_model_reg.pkl", "btc_model_cls.pkl", "btc_model_reg.h5", "btc_model_cls.h5", "btc_model_reg.keras", "btc_model_cls.keras"]:
                 src = os.path.join(CURRENT_MODELS_DIR, model_file)
                 if os.path.exists(src):
                     dst = os.path.join(checkpoint_dir, model_file)

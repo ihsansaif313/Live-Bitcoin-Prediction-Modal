@@ -104,8 +104,26 @@ def load_and_prepare_data():
     Load data and create regression/classification targets.
     """
     logger.info("Loading and preparing data...")
-    features_df = pd.read_csv(FEATURES_CSV)
-    dataset_df = pd.read_csv(DATASET_CSV)
+    import time
+    
+    def read_csv_with_retry(filepath, retries=5, delay=2):
+        for i in range(retries):
+            try:
+                df = pd.read_csv(filepath)
+                if not df.empty:
+                    return df
+            except (pd.errors.EmptyDataError, OSError):
+                pass
+            logger.warning(f"Retrying to read {filepath} (attempt {i+1}/{retries})...")
+            time.sleep(delay)
+        return pd.read_csv(filepath)  # Final attempt, will raise error if still fails
+
+    try:
+        features_df = read_csv_with_retry(FEATURES_CSV)
+        dataset_df = read_csv_with_retry(DATASET_CSV)
+    except Exception as e:
+        logger.error(f"Failed to load data files: {e}")
+        raise
     
     # Ensure they are aligned by dropping first N rows where features might be NaN
     # build_dataset.py should have handled this, but we filter any remaining NaNs
@@ -335,7 +353,10 @@ def save_best(baseline_models, deep_models, metrics_df):
         logger.info(f"Best Regressor: {best_reg_name}")
         
         if best_reg_name in deep_models:
-            deep_models[best_reg_name].save(os.path.join(MODELS_DIR, "btc_model_reg.h5"))
+            reg_path_h5 = os.path.join(MODELS_DIR, "btc_model_reg.h5")
+            reg_path_keras = os.path.join(MODELS_DIR, "btc_model_reg.keras")
+            deep_models[best_reg_name].save(reg_path_h5)
+            deep_models[best_reg_name].save(reg_path_keras)
         elif best_reg_name in baseline_models:
             with open(os.path.join(MODELS_DIR, "btc_model_reg.pkl"), 'wb') as f:
                 pickle.dump(baseline_models[best_reg_name], f)
@@ -347,7 +368,10 @@ def save_best(baseline_models, deep_models, metrics_df):
         logger.info(f"Best Classifier: {best_cls_name}")
         
         if best_cls_name in deep_models:
-            deep_models[best_cls_name].save(os.path.join(MODELS_DIR, "btc_model_cls.h5"))
+            cls_path_h5 = os.path.join(MODELS_DIR, "btc_model_cls.h5")
+            cls_path_keras = os.path.join(MODELS_DIR, "btc_model_cls.keras")
+            deep_models[best_cls_name].save(cls_path_h5)
+            deep_models[best_cls_name].save(cls_path_keras)
         elif best_cls_name in baseline_models:
             with open(os.path.join(MODELS_DIR, "btc_model_cls.pkl"), 'wb') as f:
                 pickle.dump(baseline_models[best_cls_name], f)

@@ -53,11 +53,12 @@ def initial_train(config: Dict):
     """Ensure initial models exist."""
     models_dir = config['paths']['models_dir']
     
-    # Check for either .pkl or .h5 regression model
+    # Check for either .pkl, .h5 or .keras regression model
     reg_pkl = os.path.join(models_dir, "btc_model_reg.pkl")
     reg_h5 = os.path.join(models_dir, "btc_model_reg.h5")
+    reg_keras = os.path.join(models_dir, "btc_model_reg.keras")
     
-    has_model = os.path.exists(reg_pkl) or os.path.exists(reg_h5)
+    has_model = os.path.exists(reg_pkl) or os.path.exists(reg_h5) or os.path.exists(reg_keras)
     
     if not os.path.exists(models_dir) or not has_model:
         logger.info("Models not found. Starting initial training...")
@@ -121,6 +122,20 @@ def cleanup_data(config: Dict):
         except Exception as e:
             logger.error(f"Failed to delete models dir: {e}")
 
+    # Clear log files
+    logs_dir = config['paths']['logs_dir']
+    if os.path.exists(logs_dir):
+        logger.info("Clearing log files...")
+        for log_file in os.listdir(logs_dir):
+            if log_file.endswith(".log"):
+                log_path = os.path.join(logs_dir, log_file)
+                try:
+                    with open(log_path, 'w') as f:
+                        f.truncate(0)
+                    logger.info(f"Cleared {log_file}")
+                except Exception as e:
+                    logger.error(f"Failed to clear {log_file}: {e}")
+
 import threading
 import json
 
@@ -154,16 +169,22 @@ def run_setup_sequence(config: Dict):
             update_status("running", 0.1, "Downloading Historical Data", "Fetching 6 months of OHLC data (this may take several minutes)...")
             run_step("historical_data.py", "Download Historical Data")
             
+            # New Step: Data Cleaning
+            update_status("running", 0.2, "Cleaning Data", "Detecting outliers and removing noise...")
+            from data_cleaner import clean_historical_data
+            clean_historical_data(config['paths']['historical_data'], config['paths']['historical_data_clean'])
+            
             update_status("running", 0.3, "Building Dataset", "Generating technical indicators and features...")
             run_step("build_dataset.py", "Build Initial Dataset")
         
         # 2. Model Training
         models_dir = config['paths']['models_dir']
-        # Check for either .pkl or .h5 regression model
+        # Check for either .pkl, .h5 or .keras regression model
         reg_pkl = os.path.join(models_dir, "btc_model_reg.pkl")
         reg_h5 = os.path.join(models_dir, "btc_model_reg.h5")
+        reg_keras = os.path.join(models_dir, "btc_model_reg.keras")
         
-        has_model = os.path.exists(reg_pkl) or os.path.exists(reg_h5)
+        has_model = os.path.exists(reg_pkl) or os.path.exists(reg_h5) or os.path.exists(reg_keras)
         
         if not os.path.exists(models_dir) or not has_model:
             update_status("running", 0.4, "Training Models", "Initializing training process...")

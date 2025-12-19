@@ -5,6 +5,7 @@ Run with: streamlit run btc_dashboard.py
 """
 
 import os
+import sys
 import time
 import pickle
 import pandas as pd
@@ -93,40 +94,60 @@ def load_models():
         
         # Helper to load model
         def load_specific_model(type_name, filename_base):
-            # 1. Try .h5 (Deep Learning) first
+            # 0. Try .keras (Modern Keras 3) first - most stable for current environment
+            keras_path = os.path.join(MODELS_DIR, f"{filename_base}.keras")
             h5_path = os.path.join(MODELS_DIR, f"{filename_base}.h5")
-            if os.path.exists(h5_path):
-                try:
-                    import tensorflow as tf
-                    from tensorflow.keras.layers import LayerNormalization, MultiHeadAttention
-                    
-                    custom_objects = {
-                        'LayerNormalization': LayerNormalization,
-                        'MultiHeadAttention': MultiHeadAttention
-                    }
-
-                    # Try loading with compile=False and custom_objects
+            
+            # Paths to try for deep learning
+            dl_paths = [keras_path, h5_path]
+            
+            for dl_path in dl_paths:
+                if os.path.exists(dl_path):
                     try:
-                        return tf.keras.models.load_model(h5_path, custom_objects=custom_objects, compile=False)
-                    except (TypeError, ValueError):
-                        # Fallback 1: Try default load with custom_objects
-                        return tf.keras.models.load_model(h5_path, custom_objects=custom_objects)
-                except Exception as e:
-                    st.warning(f"Found {h5_path} but failed to load: {e}")
+                        import tensorflow as tf
+                        
+                        # Get custom objects
+                        custom_objects = {}
+                        try:
+                            from tensorflow.keras.layers import LayerNormalization, MultiHeadAttention
+                            custom_objects = {'LayerNormalization': LayerNormalization, 'MultiHeadAttention': MultiHeadAttention}
+                        except:
+                            pass
+
+                        # Sequence of attempts
+                        loading_strategies = [
+                            lambda p: tf.keras.models.load_model(filepath=p, custom_objects=custom_objects, compile=False),
+                            lambda p: tf.keras.models.load_model(filepath=p, custom_objects=custom_objects),
+                            lambda p: tf.keras.models.load_model(filepath=p, compile=False),
+                            lambda p: tf.keras.models.load_model(p),
+                        ]
+
+                        for loader in loading_strategies:
+                            try:
+                                model = loader(dl_path)
+                                if model: return model
+                            except:
+                                continue
+                    except Exception:
+                        pass
             
             # 2. Try .pkl (Standard Best Model)
             pkl_path = os.path.join(MODELS_DIR, f"{filename_base}.pkl")
             if os.path.exists(pkl_path):
-                with open(pkl_path, 'rb') as f:
-                    return pickle.load(f)
+                try:
+                    with open(pkl_path, 'rb') as f:
+                        return pickle.load(f)
+                except Exception:
+                    pass
 
-            # 3. Tertiary Fallback: Look for explicit baseline backup
-            # This is created by the updated train_models.py
+            # 3. Tertiary Fallback: Explicit baseline backup
             baseline_path = os.path.join(MODELS_DIR, f"{filename_base}_baseline.pkl")
             if os.path.exists(baseline_path):
-                with open(baseline_path, 'rb') as f:
-                    # st.info(f"Using fallback baseline model for {type_name}") # Optional info
-                    return pickle.load(f)
+                try:
+                    with open(baseline_path, 'rb') as f:
+                        return pickle.load(f)
+                except Exception:
+                    pass
             
             return None
 

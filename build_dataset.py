@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Constants
-HISTORICAL_CSV = "btc_historical.csv"
+HISTORICAL_CSV = "btc_historical_clean.csv"
 LIVE_CSV = "btc_live_candles.csv"
 OUTPUT_DATASET = "btc_dataset.csv"
 OUTPUT_FEATURES = "btc_features.csv"
