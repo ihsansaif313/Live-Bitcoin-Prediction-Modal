@@ -1,0 +1,13 @@
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+xgboost
+statsmodels
+tensorflow
+PyYAML
+requests
+streamlit
+plotly
+websocket-client
