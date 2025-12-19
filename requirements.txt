@@ -11,3 +11,4 @@ requests
 streamlit
 plotly
 websocket-client
+certifi

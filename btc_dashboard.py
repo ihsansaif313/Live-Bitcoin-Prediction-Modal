@@ -13,6 +13,10 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import streamlit as st
+import subprocess
+import threading
+import yaml
+from typing import List, Dict
 
 # Import feature generation logic
 try:
@@ -29,7 +33,91 @@ LIVE_TRADES_CSV = "btc_trades_live.csv"
 MODELS_DIR = "models"
 SCALERS_FILE = "scalers.pkl"
 
-# --- Data Loading ---
+# --- Data Loading & Orchestration ---
+
+def load_config():
+    """Load configuration from config.yaml."""
+    if os.path.exists("config.yaml"):
+        with open("config.yaml", "r") as f:
+            return yaml.safe_load(f)
+    return {}
+
+def run_step(script_name: str, description: str):
+    """Run a script synchronously and wait for completion."""
+    try:
+        subprocess.check_call([sys.executable, script_name])
+    except Exception as e:
+        raise RuntimeError(f"Step {description} failed: {e}")
+
+def update_status(status, progress, message, detail=""):
+    """Write status to JSON file for dashboard to read."""
+    status_file = "logs/setup_status.json"
+    if not os.path.exists("logs"): os.makedirs("logs")
+    try:
+        with open(status_file, "w") as f:
+            json.dump({
+                "status": status,
+                "progress": progress,
+                "message": message,
+                "detail": detail
+            }, f)
+    except: pass
+
+def run_setup_sequence(config: Dict):
+    """Run all setup steps in order, updating status."""
+    try:
+        # 1. Historical Data
+        dataset_path = config.get('paths', {}).get('dataset', 'btc_dataset.csv')
+        if not os.path.exists(dataset_path):
+            update_status("running", 0.1, "Downloading Historical Data", "Fetching 6 months of OHLC data...")
+            run_step("historical_data.py", "Download Historical Data")
+            
+            update_status("running", 0.2, "Cleaning Data", "Detecting outliers and removing noise...")
+            try:
+                from data_cleaner import clean_historical_data
+                clean_historical_data(config['paths']['historical_data'], config['paths']['historical_data_clean'])
+            except:
+                run_step("data_cleaner.py", "Clean Data")
+            
+            update_status("running", 0.3, "Building Dataset", "Generating technical indicators...")
+            run_step("build_dataset.py", "Build Initial Dataset")
+        
+        # 2. Model Training
+        models_dir = config.get('paths', {}).get('models_dir', 'models')
+        reg_keras = os.path.join(models_dir, "btc_model_reg.keras")
+        if not os.path.exists(reg_keras):
+            update_status("running", 0.4, "Training Models", "Initializing training process...")
+            run_step("train_models.py", "Train Initial Models")
+            
+        update_status("complete", 1.0, "Setup Complete", "Launching live services...")
+    except Exception as e:
+        update_status("error", 0.0, "Setup Failed", str(e))
+
+@st.cache_resource
+def start_background_services():
+    """Start background services exactly once."""
+    config = load_config()
+    processes = []
+    
+    # Run setup if needed
+    setup_thread = threading.Thread(target=run_setup_sequence, args=(config,))
+    setup_thread.start()
+    
+    # Start background processes
+    scripts = ["live_stream.py", "aggregate_live_to_candles.py", "continuous_learning.py"]
+    creationflags = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)
+    
+    for script in scripts:
+        try:
+            p = subprocess.Popen(
+                [sys.executable, script],
+                creationflags=creationflags,
+                env=os.environ.copy()
+            )
+            processes.append(p)
+        except: pass
+        
+    return processes, setup_thread
 
 @st.cache_data(ttl=2)  # Cache for 2 seconds to allow near real-time updates
 def load_data():
@@ -325,6 +413,9 @@ def main():
         layout="wide",
         initial_sidebar_state="expanded"
     )
+    
+    # Initialize Setup & Services
+    _ = start_background_services()
     
     # Check setup status
     status = check_setup_status()
