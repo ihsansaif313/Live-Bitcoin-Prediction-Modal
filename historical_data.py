@@ -238,17 +238,38 @@ def save_csv(df: pd.DataFrame, path: str) -> None:
 
 
 def main():
-    """Main execution function."""
+    """Main execution function with enhanced cloud diagnostics."""
+    print(">>> HISTORICAL DATA SCRIPT STARTED", flush=True)
+    
+    # Cloud Diagnostic Check
+    try:
+        import requests
+        import pandas
+        import yaml
+        import certifi
+        print(f"DEBUG: requests version: {requests.__version__}", flush=True)
+        print(f"DEBUG: pandas version: {pd.__version__}", flush=True)
+        print(f"DEBUG: certifi path: {certifi.where()}", flush=True)
+    except Exception as e:
+        print(f"DIAGNOSTIC FAILURE: Missing Dependency - {e}", file=sys.stderr, flush=True)
+        sys.exit(1)
+
     logger.info("Starting Bitcoin historical data collection...")
     
     # Load Config
     config = {}
     if os.path.exists("config.yaml"):
-        with open("config.yaml", "r") as f:
-            config = yaml.safe_load(f)
+        try:
+            with open("config.yaml", "r") as f:
+                config = yaml.safe_load(f)
+            print("DEBUG: config.yaml loaded successfully", flush=True)
+        except Exception as e:
+            print(f"DEBUG ERROR: Could not parse config.yaml: {e}", flush=True)
     
     symbol = config.get('params', {}).get('symbol', 'BTCUSDT')
     output_path = config.get('paths', {}).get('historical_data', OUTPUT_CSV)
+    
+    print(f"DEBUG: Target Symbol: {symbol}, Output: {output_path}", flush=True)
     
     try:
         # Fetch 6 months of BTC/USDT 1-minute data

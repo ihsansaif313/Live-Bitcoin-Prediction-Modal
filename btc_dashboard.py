@@ -136,9 +136,22 @@ def run_setup_sequence(config: Dict):
 
         # 2. Historical Data
         dataset_path = config.get('paths', {}).get('dataset', 'btc_dataset.csv')
+        hist_path = config.get('paths', {}).get('historical_data', 'btc_historical.csv')
+        symbol = config.get('params', {}).get('symbol', 'BTCUSDT')
+
         if not os.path.exists(dataset_path):
             update_status("running", 0.1, "Downloading Historical Data", "Fetching 6 months of OHLC data...")
-            run_step("historical_data.py", "Download Historical Data")
+            try:
+                # Try calling directly for better error reporting in Streamlit
+                from historical_data import paginate_6_months, save_csv
+                df = paginate_6_months(symbol=symbol, interval="1m")
+                save_csv(df, hist_path)
+                with open(log_file, "a") as f:
+                    f.write(f"\n<<< Historical Data downloaded successfully (direct call).\n")
+            except Exception as e:
+                with open(log_file, "a") as f:
+                    f.write(f"\nDirect call failed: {e}. Falling back to subprocess...\n")
+                run_step("historical_data.py", "Download Historical Data")
             
             update_status("running", 0.2, "Cleaning Data", "Detecting outliers and removing noise...")
             try:
