@@ -82,11 +82,12 @@ class ContinuousLearner:
             new_data = df[df['timeOpen'] > self.last_processed_time]
             
             if not new_data.empty:
-                logger.info(f"Found {len(new_data)} new candles")
+                logger.info(f"Found {len(new_data)} new candles. Applying data_cleaner filters...")
                 # Apply Cleaning
                 new_data = detect_outliers(new_data)
                 new_data = remove_noise(new_data)
                 self.last_processed_time = new_data['timeOpen'].max()
+                logger.info("New data cleaned successfully.")
                 
             return new_data
         except Exception as e:
@@ -179,7 +180,7 @@ class ContinuousLearner:
 
     def predict_next(self) -> Dict[str, Any]:
         """
-        Inference function: Predict next minute close and direction.
+        Inference function: Predict next 15-minute close and direction.
         """
         try:
             # Load latest features
@@ -199,18 +200,23 @@ class ContinuousLearner:
             # 1. Baseline Prediction (using last row)
             last_row = df.iloc[-1][feature_cols].values.reshape(1, -1)
             
+            # Load current price from candles or dataset to reconstruct
+            current_price = 0
+            if os.path.exists(DATASET_CSV):
+                c_df = pd.read_csv(DATASET_CSV)
+                if not c_df.empty:
+                    current_price = c_df.iloc[-1]['close']
+            
             baseline_result = {}
             reg_path = os.path.join(CURRENT_MODELS_DIR, "btc_model_reg.pkl")
-            if os.path.exists(reg_path):
+            if os.path.exists(reg_path) and current_price > 0:
                 with open(reg_path, 'rb') as f:
                     model = pickle.load(f)
-                    baseline_result['predicted_close'] = model.predict(last_row)[0]
+                    predicted_return = model.predict(last_row)[0]
+                    baseline_result['predicted_close'] = float(current_price * (1 + predicted_return))
             
-            cls_path = os.path.join(CURRENT_MODELS_DIR, "btc_model_cls.pkl")
-            if os.path.exists(cls_path):
-                with open(cls_path, 'rb') as f:
-                    model = pickle.load(f)
-                    baseline_result['predicted_direction'] = "UP" if model.predict(last_row)[0] == 1 else "DOWN"
+            if 'predicted_close' in baseline_result:
+                baseline_result['predicted_direction'] = "UP" if baseline_result['predicted_close'] > current_price else "DOWN"
 
             return baseline_result
             

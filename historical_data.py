@@ -11,7 +11,10 @@ from datetime import datetime, timedelta, timezone
 import yaml
 import sys
 import json
+import os
 from typing import List
+
+import certifi
 
 # Configure logging
 logging.basicConfig(
@@ -21,7 +24,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Constants
-BINANCE_API_URL = "https://api.binance.com/api/v3/klines"
+# Using multiple endpoints to bypass potential cloud IP blocks
+BINANCE_ENDPOINTS = [
+    "https://api.binance.com/api/v3/klines",
+    "https://api1.binance.com/api/v3/klines",
+    "https://api2.binance.com/api/v3/klines",
+    "https://api3.binance.com/api/v3/klines"
+]
 OUTPUT_CSV = "btc_historical.csv"
 MAX_RETRIES = 5
 RETRY_DELAY = 2  # seconds
@@ -47,33 +56,41 @@ def fetch_klines(symbol: str, interval: str, start_ms: int, end_ms: int) -> List
         "symbol": symbol,
         "interval": interval,
         "startTime": start_ms,
-        "endTime": end_ms,
-        "limit": 1000  # Max allowed by Binance
+        "endTime": end_ms or int(time.time() * 1000),
+        "limit": 1000
     }
     
     for attempt in range(MAX_RETRIES):
+        # Rotate endpoints on failure
+        api_url = BINANCE_ENDPOINTS[attempt % len(BINANCE_ENDPOINTS)]
         try:
-            response = requests.get(BINANCE_API_URL, params=params, timeout=10)
+            response = requests.get(
+                api_url, 
+                params=params, 
+                timeout=15, 
+                verify=certifi.where() # Ensure SSL works on Linux/Cloud
+            )
             
             # Handle rate limiting
             if response.status_code == 429:
                 retry_after = int(response.headers.get('Retry-After', RETRY_DELAY * 2))
-                logger.warning(f"Rate limited. Waiting {retry_after} seconds...")
+                logger.warning(f"Rate limited by {api_url}. Waiting {retry_after} seconds...")
                 time.sleep(retry_after)
                 continue
             
-            response.raise_for_status()
+            if response.status_code != 200:
+                logger.error(f"API Error ({response.status_code}) from {api_url}: {response.text}")
+                response.raise_for_status()
+
             data = response.json()
-            
-            logger.info(f"Fetched {len(data)} klines from {datetime.fromtimestamp(start_ms/1000, tz=timezone.utc)}")
             return data
             
         except requests.exceptions.RequestException as e:
-            logger.warning(f"Attempt {attempt + 1}/{MAX_RETRIES} failed: {e}")
+            logger.warning(f"Attempt {attempt + 1}/{MAX_RETRIES} via {api_url} failed: {e}")
             if attempt < MAX_RETRIES - 1:
                 time.sleep(RETRY_DELAY * (attempt + 1))  # Exponential backoff
             else:
-                raise Exception(f"Failed to fetch klines after {MAX_RETRIES} attempts") from e
+                raise Exception(f"Failed to fetch data from any Binance endpoint after {MAX_RETRIES} tries.") from e
     
     return []
 
@@ -141,10 +158,14 @@ def paginate_6_months(symbol: str, interval: str) -> pd.DataFrame:
     all_klines = []
     
     # Pagination loop
-    while current_start_ms < end_ms:
-        # Fetch up to 1000 klines (Binance limit)
-        # For 1m interval: 1000 minutes = ~16.67 hours
-        klines = fetch_klines(symbol, interval, current_start_ms, end_ms)
+    while True:
+        # Recalculate end_ms to "now" inside the loop to capture minutes passed during download
+        current_end_ms = int(time.time() * 1000)
+        if current_start_ms >= current_end_ms:
+            break
+            
+        # Fetch up to 1000 klines
+        klines = fetch_klines(symbol, interval, current_start_ms, current_end_ms)
         
         if not klines:
             logger.warning("No more data returned, stopping pagination")
@@ -153,16 +174,16 @@ def paginate_6_months(symbol: str, interval: str) -> pd.DataFrame:
         all_klines.extend(klines)
         
         # Update start time to the close time of the last kline + 1ms
-        last_close_time = klines[-1][6]  # Close time is at index 6
+        last_close_time = klines[-1][6]
         current_start_ms = last_close_time + 1
-        
-        # Small delay to respect rate limits (weight: 1 per request)
-        time.sleep(0.1)
         
         # Log progress
         progress_pct = ((current_start_ms - int(start_time.timestamp() * 1000)) / 
-                       (end_ms - int(start_time.timestamp() * 1000))) * 100
-        logger.info(f"Progress: {progress_pct:.1f}%")
+                       (current_end_ms - int(start_time.timestamp() * 1000))) * 100
+        logger.info(f"Progress: {min(progress_pct, 100.0):.1f}% | Last candle: {datetime.fromtimestamp(last_close_time/1000, tz=timezone.utc)}")
+        
+        # Tiny sleep to be polite to the API and avoid triggering cloud IP filters
+        time.sleep(0.1)
     
     logger.info(f"Total klines fetched: {len(all_klines)}")
     

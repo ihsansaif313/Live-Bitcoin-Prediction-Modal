@@ -130,11 +130,15 @@ def load_and_prepare_data():
     combined = pd.merge(features_df, dataset_df[['timeOpen', 'close']], on='timeOpen')
     combined = combined.dropna().reset_index(drop=True)
     
-    # Regression target: close_t+1
-    combined['target_reg'] = combined['close'].shift(-1)
+    # Regression target: Percentage Change (Return) for the NEXT 15 minutes
+    # We predict the 15-minute move for better trend-following and less noise
+    combined['target_reg'] = (combined['close'].shift(-15) - combined['close']) / combined['close']
     
-    # Classification target: 1 if close_t+1 > close_t else 0
-    combined['target_cls'] = (combined['target_reg'] > combined['close']).astype(int)
+    # Clip extreme returns (outliers) to [-0.10, 0.10] (10% in 15 mins is plenty)
+    combined['target_reg'] = combined['target_reg'].clip(-0.10, 0.10)
+    
+    # Classification target: 1 if 15-min return > 0 else 0
+    combined['target_cls'] = (combined['target_reg'] > 0).astype(int)
     
     # Drop rows without target (the last row)
     combined = combined.dropna().reset_index(drop=True)
@@ -234,7 +238,7 @@ def train_deep_models(splits, input_dim):
         LSTM(64, return_sequences=True),
         Dropout(0.2),
         LSTM(32),
-        Dense(1)
+        Dense(1, activation='tanh') # Tanh allows positive and negative returns
     ])
     lstm_reg.compile(optimizer='adam', loss='mse')
     lstm_reg.fit(X_train_seq, y_train_reg_seq, validation_data=(X_val_seq, y_val_reg_seq), 

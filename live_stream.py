@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # Constants
 WEBSOCKET_URL = "wss://stream.binance.com:9443/ws/btcusdt@trade"
 OUTPUT_CSV = "btc_trades_live.csv"
-BATCH_INTERVAL = 0.5  # seconds
+BATCH_INTERVAL = 2  # seconds
 MAX_RECONNECT_DELAY = 60  # seconds
 INITIAL_RECONNECT_DELAY = 1  # seconds
 
