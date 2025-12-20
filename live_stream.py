@@ -23,7 +23,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Constants
-WEBSOCKET_URL = "wss://stream.binance.com:9443/ws/btcusdt@trade"
+WEBSOCKET_URLS = [
+    "wss://stream.binance.com:9443/ws/btcusdt@trade",
+    "wss://stream.binance.us:9443/ws/btcusdt@trade" # Fallback for US-hosted servers
+]
 OUTPUT_CSV = "btc_trades_live.csv"
 BATCH_INTERVAL = 2  # seconds
 MAX_RECONNECT_DELAY = 60  # seconds
@@ -181,15 +184,17 @@ def run_stream() -> None:
     logger.info("Batch writer thread started")
     
     while running:
+        # Rotate between global and US streams
+        current_url = WEBSOCKET_URLS[reconnect_count % len(WEBSOCKET_URLS)]
         try:
-            logger.info(f"Connecting to {WEBSOCKET_URL}...")
+            logger.info(f"Connecting to {current_url}...")
             
             import ssl
             import certifi
             
             # Create WebSocket connection with SSL context
             ws = websocket.WebSocketApp(
-                WEBSOCKET_URL,
+                current_url,
                 on_message=on_message,
                 on_error=on_error,
                 on_close=on_close,
@@ -197,15 +202,13 @@ def run_stream() -> None:
             )
             
             # Run WebSocket (blocking) with SSL options
-            ws.run_forever(sslopt={"ca_certs": certifi.where()})
+            ws.run_forever(sslopt={"ca_certs": certifi.where()}, ping_interval=30, ping_timeout=10)
             
             # If we get here, connection was closed
             if running:
                 reconnect_count += 1
-                logger.warning(f"Connection lost. Reconnecting in {reconnect_delay}s (attempt {reconnect_count})...")
+                logger.warning(f"Connection lost or Blocked at {current_url}. Trying next in {reconnect_delay}s...")
                 time.sleep(reconnect_delay)
-                
-                # Exponential backoff
                 reconnect_delay = min(reconnect_delay * 2, MAX_RECONNECT_DELAY)
             
         except KeyboardInterrupt:

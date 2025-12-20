@@ -24,12 +24,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Constants
-# Using multiple endpoints to bypass potential cloud IP blocks
+# Using multiple endpoints and regional fallbacks
 BINANCE_ENDPOINTS = [
     "https://api.binance.com/api/v3/klines",
+    "https://api.binance.us/api/v3/klines",  # Correct endpoint for US-hosted cloud servers
     "https://api1.binance.com/api/v3/klines",
-    "https://api2.binance.com/api/v3/klines",
-    "https://api3.binance.com/api/v3/klines"
+    "https://api2.binance.com/api/v3/klines"
 ]
 OUTPUT_CSV = "btc_historical.csv"
 MAX_RETRIES = 5
@@ -71,11 +71,10 @@ def fetch_klines(symbol: str, interval: str, start_ms: int, end_ms: int) -> List
                 verify=certifi.where() # Ensure SSL works on Linux/Cloud
             )
             
-            # Handle rate limiting
-            if response.status_code == 429:
-                retry_after = int(response.headers.get('Retry-After', RETRY_DELAY * 2))
-                logger.warning(f"Rate limited by {api_url}. Waiting {retry_after} seconds...")
-                time.sleep(retry_after)
+            # Handle Geo-blocking (Error 451)
+            if response.status_code == 451:
+                logger.warning(f"Region Blocked (451) at {api_url}. Streamlit Cloud is likely in a restricted region (e.g., USA).")
+                # If we hit a block on .com, let's try .us immediately in the next rotation
                 continue
             
             if response.status_code != 200:
