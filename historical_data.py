@@ -1,6 +1,6 @@
 """
 Bitcoin Historical Data Collection Script
-Fetches 6 months of BTC/USDT 1-minute klines from Binance and saves to CSV.
+Fetches 60 days of BTC/USDT 1-minute klines from Binance and saves to CSV.
 """
 
 import requests
@@ -146,7 +146,7 @@ def paginate_6_months(symbol: str, interval: str) -> pd.DataFrame:
     """
     # Calculate time range (6 months ago to now)
     end_time = datetime.now(timezone.utc)
-    start_time = end_time - timedelta(days=180)  # Approximately 6 months
+    start_time = end_time - timedelta(days=60)  # Reduced from 180 to 60 days for Streamlit RAM safety
     
     logger.info(f"Fetching data from {start_time} to {end_time}")
     

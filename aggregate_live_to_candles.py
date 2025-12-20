@@ -13,7 +13,7 @@ from typing import Optional
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO, # Changed from DEBUG to INFO to save log buffer space
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)

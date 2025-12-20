@@ -6,6 +6,7 @@ Trains Baseline and Deep Learning models for BTC price prediction.
 import os
 import pickle
 import logging
+import gc  # Memory management
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -91,13 +92,23 @@ EPOCHS = 10  # Reduced for reliability
 def make_sequences(features: np.ndarray, targets_reg: np.ndarray, targets_cls: np.ndarray, window_size: int):
     """
     Create sliding window sequences for Deep Learning models.
+    Pre-allocates numpy array for memory efficiency.
     """
-    X, y_reg, y_cls = [], [], []
-    for i in range(len(features) - window_size):
-        X.append(features[i:(i + window_size)])
-        y_reg.append(targets_reg[i + window_size])
-        y_cls.append(targets_cls[i + window_size])
-    return np.array(X, dtype=np.float32), np.array(y_reg, dtype=np.float32), np.array(y_cls, dtype=np.float32)
+    n = len(features) - window_size
+    if n <= 0:
+        return np.array([]), np.array([]), np.array([])
+        
+    # Pre-allocate
+    X = np.zeros((n, window_size, features.shape[1]), dtype=np.float32)
+    y_reg = np.zeros(n, dtype=np.float32)
+    y_cls = np.zeros(n, dtype=np.int32)
+    
+    for i in range(n):
+        X[i] = features[i:(i + window_size)]
+        y_reg[i] = targets_reg[i + window_size]
+        y_cls[i] = targets_cls[i + window_size]
+        
+    return X, y_reg, y_cls
 
 def load_and_prepare_data():
     """
@@ -218,6 +229,11 @@ def train_deep_models(splits, input_dim):
         logger.warning("Skipping Deep Learning models as TensorFlow is not available.")
         return {}, (None, None, None)
 
+    # Memory Cleanup
+    import tensorflow as tf
+    tf.keras.backend.clear_session()
+    gc.collect()
+
     logger.info("Preparing sequences for Deep Learning...")
     # Create sequences one by one / manage memory if needed
     X_train_seq, y_train_reg_seq, y_train_cls_seq = make_sequences(*splits['train'], WINDOW_SIZE)
@@ -279,7 +295,19 @@ def train_deep_models(splits, input_dim):
                         callbacks=[EarlyStopping(patience=3, restore_best_weights=True)], verbose=0)
     results['Transformer_Reg'] = transformer_reg
 
-    return results, (X_test_seq, y_test_reg_seq, y_test_cls_seq)
+    # Return only test sequences to save RAM, train/val can be discarded now
+    # We copy them to ensure they aren't deleted by accident if needed elsewhere
+    X_test_ret = X_test_seq.copy()
+    y_reg_ret = y_test_reg_seq.copy()
+    y_cls_ret = y_test_cls_seq.copy()
+    
+    # Cleanup big arrays
+    del X_train_seq, y_train_reg_seq, y_train_cls_seq
+    del X_val_seq, y_val_reg_seq, y_val_cls_seq
+    del X_test_seq, y_test_reg_seq, y_test_cls_seq
+    gc.collect()
+    
+    return results, (X_test_ret, y_reg_ret, y_cls_ret)
 
 def evaluate(baseline_models, deep_models, splits, seq_test):
     """
