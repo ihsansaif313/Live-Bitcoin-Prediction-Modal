@@ -651,20 +651,36 @@ def main():
     current_price = None
     price_source = "unknown"
     
-    try:
-        import requests
-        response = requests.get(
-            "https://api.binance.com/api/v3/ticker/price",
-            params={"symbol": "BTCUSDT"},
-            timeout=5
-        )
-        if response.status_code == 200:
-            current_price = float(response.json()['price'])
-            price_source = "Binance API (Live)"
-            st.sidebar.success(f"📡 {price_source}")
-    except Exception as e:
-        # Fallback 1: Recent trades
-        if not trades.empty:
+    # Try multiple API endpoints (global, US, alternative)
+    api_endpoints = [
+        "https://api.binance.com/api/v3/ticker/price",
+        "https://api.binance.us/api/v3/ticker/price",
+        "https://api1.binance.com/api/v3/ticker/price",
+    ]
+    
+    for endpoint in api_endpoints:
+        try:
+            import requests
+            response = requests.get(
+                endpoint,
+                params={"symbol": "BTCUSDT"},
+                timeout=5
+            )
+            if response.status_code == 200:
+                current_price = float(response.json()['price'])
+                price_source = f"Binance API (Live)"
+                st.sidebar.success(f"📡 {price_source}")
+                break  # Success, exit loop
+            else:
+                continue  # Try next endpoint
+        except Exception as e:
+            # Log error for debugging (only on last endpoint)
+            if endpoint == api_endpoints[-1]:
+                st.sidebar.error(f"API Error: {str(e)[:50]}")
+            continue
+    
+    # Fallback 1: Recent trades (if API failed)
+    if current_price is None and not trades.empty:
             # Check if trades are recent (within last 5 minutes)
             latest_trade_time = pd.to_datetime(trades['time'].iloc[0])
             time_diff = pd.Timestamp.now(tz='UTC') - latest_trade_time
