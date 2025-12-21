@@ -628,9 +628,47 @@ def main():
         except Exception:
             pass
 
+    # Optional: Filter extreme candles for better visualization
+    filter_outliers = st.sidebar.checkbox("Filter Extreme Candles", value=True, 
+        help="Hide candles with extreme price ranges for better chart readability")
+    
+    if filter_outliers and not df_view.empty:
+        # Calculate candle ranges
+        df_view['candle_range_pct'] = ((df_view['high'] - df_view['low']) / df_view['close']) * 100
+        
+        # Keep only candles within 99th percentile
+        threshold = df_view['candle_range_pct'].quantile(0.99)
+        original_count = len(df_view)
+        df_view = df_view[df_view['candle_range_pct'] <= threshold].copy()
+        filtered_count = original_count - len(df_view)
+        
+        if filtered_count > 0:
+            st.sidebar.caption(f"Filtered {filtered_count} extreme candles (>{threshold:.2f}% range)")
+
     # Calculate Metrics
     # IMPORTANT: Use THE LATEST TRADE for real-time price, not the last candle
-    current_price = trades['price'].iloc[0] if not trades.empty else df.iloc[-1]['close']
+    current_price = None
+    
+    if not trades.empty:
+        current_price = trades['price'].iloc[0]
+    else:
+        # Fallback: Fetch live price from Binance REST API (for Streamlit Cloud)
+        # Background WebSocket processes don't persist on Streamlit Cloud
+        try:
+            import requests
+            response = requests.get(
+                "https://api.binance.com/api/v3/ticker/price",
+                params={"symbol": "BTCUSDT"},
+                timeout=3
+            )
+            if response.status_code == 200:
+                current_price = float(response.json()['price'])
+                st.sidebar.caption("📡 Live price from API")
+            else:
+                current_price = df.iloc[-1]['close'] if not df.empty else 0
+        except Exception:
+            current_price = df.iloc[-1]['close'] if not df.empty else 0
+    
     last_price = df.iloc[-1]['close'] if not df.empty else current_price # Previous candle close
     price_delta = current_price - last_price
     volume_24h = df[df['timeOpen'] > (df['timeOpen'].max() - pd.Timedelta(hours=24))]['volume'].sum()

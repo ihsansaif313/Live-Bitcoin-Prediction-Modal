@@ -1,0 +1,64 @@
+Total rows: 86403
+
+Columns: ['timeOpen', 'timeClose', 'open', 'high', 'low', 'close', 'volume', 'numberOfTrades']
+
+Date range: 2025-10-22 19:10:00+00:00 to 2025-12-21 19:12:00+00:00
+
+=== PRICE STATISTICS ===
+                open  ...          close
+count   86403.000000  ...   86403.000000
+mean    96431.808174  ...   96431.577848
+std      9186.661012  ...    9186.615549
+min     80730.670000  ...   80730.660000
+25%     89277.680000  ...   89277.565000
+50%     92315.010000  ...   92314.910000
+75%    103944.425000  ...  103943.860000
+max    116254.670000  ...  116254.670000
+
+[8 rows x 4 columns]
+
+=== CANDLE RANGE STATISTICS ===
+count    86403.000000
+mean        68.523562
+std         62.185523
+min          0.010000
+25%         28.650000
+50%         53.050000
+75%         89.840000
+max       1774.530000
+Name: candle_range, dtype: float64
+
+Candle range as % of price:
+count    86403.000000
+mean         0.071954
+std          0.066361
+min          0.000009
+25%          0.029588
+50%          0.055180
+75%          0.094247
+max          2.126424
+Name: candle_range_pct, dtype: float64
+
+=== TOP 10 LARGEST CANDLES ===
+                       timeOpen  ...  candle_range_pct
+42504 2025-11-21 07:34:00+00:00  ...          2.126424
+5933  2025-10-26 22:03:00+00:00  ...          1.317240
+42503 2025-11-21 07:33:00+00:00  ...          1.784532
+10045 2025-10-29 18:35:00+00:00  ...          1.233644
+2480  2025-10-24 12:30:00+00:00  ...          1.082826
+40126 2025-11-19 15:56:00+00:00  ...          1.344635
+37166 2025-11-17 14:36:00+00:00  ...          1.115424
+10049 2025-10-29 18:39:00+00:00  ...          0.967832
+80382 2025-12-17 14:52:00+00:00  ...          1.160066
+37635 2025-11-17 22:25:00+00:00  ...          1.085413
+
+[10 rows x 7 columns]
+
+=== DATA QUALITY CHECKS ===
+Rows with zero prices: 0
+Rows with negative prices: 0
+Rows where high < low: 0
+Rows where close > high: 0
+Rows where close < low: 0
+
+Duplicate timestamps: 0
