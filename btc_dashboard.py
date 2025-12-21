@@ -191,7 +191,6 @@ def start_background_services():
     # We return the thread so st.cache_resource tracks it (though internal services manage themselves)
     return setup_thread
 
-@st.cache_data(ttl=2)  # Cache for 2 seconds to allow near real-time updates
 def load_data():
     """Load historical and live candle data."""
     # 1. Historical Dataset
