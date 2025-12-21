@@ -646,28 +646,38 @@ def main():
             st.sidebar.caption(f"Filtered {filtered_count} extreme candles (>{threshold:.2f}% range)")
 
     # Calculate Metrics
-    # IMPORTANT: Use THE LATEST TRADE for real-time price, not the last candle
+    # ALWAYS fetch live price from Binance API for accuracy
+    # Trade data can be stale, especially on Streamlit Cloud where WebSocket doesn't persist
     current_price = None
+    price_source = "unknown"
     
-    if not trades.empty:
-        current_price = trades['price'].iloc[0]
-    else:
-        # Fallback: Fetch live price from Binance REST API (for Streamlit Cloud)
-        # Background WebSocket processes don't persist on Streamlit Cloud
-        try:
-            import requests
-            response = requests.get(
-                "https://api.binance.com/api/v3/ticker/price",
-                params={"symbol": "BTCUSDT"},
-                timeout=3
-            )
-            if response.status_code == 200:
-                current_price = float(response.json()['price'])
-                st.sidebar.caption("📡 Live price from API")
-            else:
-                current_price = df.iloc[-1]['close'] if not df.empty else 0
-        except Exception:
-            current_price = df.iloc[-1]['close'] if not df.empty else 0
+    try:
+        import requests
+        response = requests.get(
+            "https://api.binance.com/api/v3/ticker/price",
+            params={"symbol": "BTCUSDT"},
+            timeout=5
+        )
+        if response.status_code == 200:
+            current_price = float(response.json()['price'])
+            price_source = "Binance API (Live)"
+            st.sidebar.success(f"📡 {price_source}")
+    except Exception as e:
+        # Fallback 1: Recent trades
+        if not trades.empty:
+            # Check if trades are recent (within last 5 minutes)
+            latest_trade_time = pd.to_datetime(trades['time'].iloc[0])
+            time_diff = pd.Timestamp.now(tz='UTC') - latest_trade_time
+            if time_diff.total_seconds() < 300:  # 5 minutes
+                current_price = trades['price'].iloc[0]
+                price_source = "WebSocket Trades"
+                st.sidebar.info(f"📊 {price_source}")
+        
+        # Fallback 2: Latest candle
+        if current_price is None and not df.empty:
+            current_price = df.iloc[-1]['close']
+            price_source = "Historical Data"
+            st.sidebar.warning(f"⚠️ {price_source} (May be stale)")
     
     last_price = df.iloc[-1]['close'] if not df.empty else current_price # Previous candle close
     price_delta = current_price - last_price
