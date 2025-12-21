@@ -679,7 +679,13 @@ def main():
             price_source = "Historical Data"
             st.sidebar.warning(f"⚠️ {price_source} (May be stale)")
     
-    last_price = df.iloc[-1]['close'] if not df.empty else current_price # Previous candle close
+    last_price = df.iloc[-1]['close'] if not df.empty else 0
+    
+    # Safety check: ensure current_price is not None
+    if current_price is None:
+        current_price = last_price
+        st.sidebar.error("⚠️ Unable to fetch live price")
+    
     price_delta = current_price - last_price
     volume_24h = df[df['timeOpen'] > (df['timeOpen'].max() - pd.Timedelta(hours=24))]['volume'].sum()
 
