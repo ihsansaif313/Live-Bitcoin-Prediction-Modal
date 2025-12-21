@@ -260,11 +260,12 @@ def load_data():
 
     return combined_df, trades_df
 
-@st.cache_resource
+@st.cache_resource(ttl=60)  # Retry every 60 seconds if models not found
 def load_models():
     """Load trained models and scalers (supports .pkl and .h5)."""
     models = {}
     scalers = None
+    success = False
     
     try:
         # Load Scalers
@@ -334,13 +335,15 @@ def load_models():
         models['Reg'] = load_specific_model("Regression", "btc_model_reg")
         models['Cls'] = load_specific_model("Classification", "btc_model_cls")
 
-        if not models['Reg'] or not models['Cls']:
-             st.warning("Could not load one or more models. Waiting for training to complete...")
+        # Check if both models loaded successfully
+        if models['Reg'] and models['Cls'] and scalers:
+            success = True
 
     except Exception as e:
-        st.warning(f"Error loading resources: {e}")
+        # Don't show warnings in cached functions - let caller handle it
+        pass
         
-    return models, scalers
+    return models, scalers, success
 
 @st.cache_data(ttl=1)
 def predict_live(df, _models, _scalers, current_price):
@@ -554,6 +557,42 @@ def main():
         st.error(status.get("detail"))
         return
 
+    # Verify models are loaded before showing dashboard
+    models, scalers, models_loaded = load_models()
+    
+    if not models_loaded:
+        st.title("🚀 Initializing Bitcoin AI System")
+        st.markdown("### Waiting for Models to Load...")
+        st.info("Models are being trained or loaded. This may take a few minutes on first run or on Streamlit Cloud.")
+        
+        # Show helpful information
+        st.divider()
+        st.warning("🔄 **Model Loading in Progress**")
+        
+        # Check if models directory exists
+        if os.path.exists(MODELS_DIR):
+            model_files = os.listdir(MODELS_DIR)
+            if model_files:
+                st.info(f"Found {len(model_files)} files in models directory. Attempting to load...")
+            else:
+                st.info("Models directory is empty. Training may still be in progress.")
+        else:
+            st.info("Models directory not found. Training is in progress.")
+        
+        with st.expander("What's happening?"):
+            st.write("""
+            - **First Run**: The system is downloading historical data and training models. This takes 5-10 minutes.
+            - **Streamlit Cloud**: Training on Cloud CPUs is slower than local GPU training.
+            - **Fresh Start**: If `fresh_start: True` is set, all models are retrained from scratch.
+            
+            The dashboard will automatically refresh and show predictions once models are ready.
+            """)
+        
+        st.info("⏳ Auto-refreshing every 5 seconds...")
+        time.sleep(5)
+        st.rerun()
+        return
+
     st.title("BTC/USDT AI Prediction Dashboard 🚀")
     st.sidebar.header("Controls")
     refresh_rate = st.sidebar.slider("Refresh Rate (sec)", 0.5, 60.0, 2.0)
@@ -562,7 +601,6 @@ def main():
     
     # Load Data
     df, trades = load_data()
-    models, scalers = load_models()
     
     if df.empty:
         st.info("Waiting for data... Ensure live_stream.py is running.")
