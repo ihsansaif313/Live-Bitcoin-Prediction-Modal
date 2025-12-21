@@ -681,19 +681,19 @@ def main():
     
     # Fallback 1: Recent trades (if API failed)
     if current_price is None and not trades.empty:
-            # Check if trades are recent (within last 5 minutes)
-            latest_trade_time = pd.to_datetime(trades['time'].iloc[0])
-            time_diff = pd.Timestamp.now(tz='UTC') - latest_trade_time
-            if time_diff.total_seconds() < 300:  # 5 minutes
-                current_price = trades['price'].iloc[0]
-                price_source = "WebSocket Trades"
-                st.sidebar.info(f"📊 {price_source}")
-        
-        # Fallback 2: Latest candle
-        if current_price is None and not df.empty:
-            current_price = df.iloc[-1]['close']
-            price_source = "Historical Data"
-            st.sidebar.warning(f"⚠️ {price_source} (May be stale)")
+        # Check if trades are recent (within last 5 minutes)
+        latest_trade_time = pd.to_datetime(trades['time'].iloc[0])
+        time_diff = pd.Timestamp.now(tz='UTC') - latest_trade_time
+        if time_diff.total_seconds() < 300:  # 5 minutes
+            current_price = trades['price'].iloc[0]
+            price_source = "WebSocket Trades"
+            st.sidebar.info(f"📊 {price_source}")
+    
+    # Fallback 2: Latest candle
+    if current_price is None and not df.empty:
+        current_price = df.iloc[-1]['close']
+        price_source = "Historical Data"
+        st.sidebar.warning(f"⚠️ {price_source} (May be stale)")
     
     last_price = df.iloc[-1]['close'] if not df.empty else 0
     
