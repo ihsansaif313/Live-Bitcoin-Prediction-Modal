@@ -114,7 +114,7 @@ def clean_historical_data(input_path: str, output_path: str):
         return
 
     logger.info(f"Starting cleaning on {input_path}...")
-    df = pd.read_csv(input_path)
+    df = pd.read_csv(input_path, low_memory=False)
     initial_rows = len(df)
     
     # Apply cleaning rules
@@ -122,10 +122,30 @@ def clean_historical_data(input_path: str, output_path: str):
     df = remove_noise(df)
     
     # Ensure time sorted
-    df['timeOpen'] = pd.to_datetime(df['timeOpen'], utc=True)
+    df['timeOpen'] = pd.to_datetime(df['timeOpen'], utc=True, errors='coerce')
+    df = df.dropna(subset=['timeOpen'])
     df = df.sort_values('timeOpen').reset_index(drop=True)
     
-    df.to_csv(output_path, index=False)
+    def safe_replace(tmp, target):
+        max_retries = 5
+        for i in range(max_retries):
+            try:
+                if os.name == 'nt' and os.path.exists(target):
+                    os.remove(target) # Windows sometimes needs explicit remove
+                    os.rename(tmp, target)
+                else:
+                    os.replace(tmp, target)
+                return True
+            except PermissionError:
+                if i < max_retries - 1:
+                    time.sleep(0.5)
+                    continue
+                raise
+        return False
+
+    tmp_out = output_path + ".tmp"
+    df.to_csv(tmp_out, index=False)
+    safe_replace(tmp_out, output_path)
     logger.info(f"Cleaned data saved to {output_path}. Rows: {len(df)} (Original: {initial_rows})")
 
 if __name__ == "__main__":

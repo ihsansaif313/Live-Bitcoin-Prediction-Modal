@@ -21,6 +21,9 @@ logger = logging.getLogger(__name__)
 # Constants
 HISTORICAL_CSV = "btc_historical_clean.csv"
 LIVE_CSV = "btc_live_candles.csv"
+SENTIMENT_CSV = "sentiment_minute.csv"
+ORDERBOOK_CSV = "orderbook_depth.csv"
+MACRO_CSV = "macro_factors.csv"
 OUTPUT_DATASET = "btc_dataset.csv"
 OUTPUT_FEATURES = "btc_features.csv"
 OUTPUT_NORMALIZED = "btc_features_normalized.csv"
@@ -41,17 +44,18 @@ def load_candles() -> pd.DataFrame:
     
     # Load historical data
     if os.path.exists(HISTORICAL_CSV):
-        historical = pd.read_csv(HISTORICAL_CSV)
-        historical['timeOpen'] = pd.to_datetime(historical['timeOpen'], utc=True)
+        historical = pd.read_csv(HISTORICAL_CSV, low_memory=False)
+        historical['timeOpen'] = pd.to_datetime(historical['timeOpen'], utc=True, errors='coerce')
+        historical = historical.dropna(subset=['timeOpen'])
         logger.info(f"Loaded {len(historical)} historical candles")
         candles_list.append(historical)
     else:
         logger.warning(f"{HISTORICAL_CSV} not found")
-    
     # Load live data
     if os.path.exists(LIVE_CSV):
-        live = pd.read_csv(LIVE_CSV)
-        live['timeOpen'] = pd.to_datetime(live['timeOpen'], utc=True)
+        live = pd.read_csv(LIVE_CSV, low_memory=False)
+        live['timeOpen'] = pd.to_datetime(live['timeOpen'], utc=True, errors='coerce')
+        live = live.dropna(subset=['timeOpen'])
         logger.info(f"Loaded {len(live)} live candles")
         candles_list.append(live)
     else:
@@ -77,6 +81,100 @@ def load_candles() -> pd.DataFrame:
     logger.info(f"Date range: {candles['timeOpen'].min()} to {candles['timeOpen'].max()}")
     
     return candles
+
+
+def load_sentiment_data() -> pd.DataFrame:
+    """
+    Load sentiment data from sentiment_minute.csv.
+    
+    Returns:
+        DataFrame with sentiment features per minute, or empty DataFrame if file doesn't exist
+    """
+    logger.info("Loading sentiment data...")
+    
+    if not os.path.exists(SENTIMENT_CSV):
+        logger.warning(f"{SENTIMENT_CSV} not found - sentiment features will be zero-filled")
+        return pd.DataFrame()
+    
+    try:
+        sentiment = pd.read_csv(SENTIMENT_CSV, low_memory=False)
+        sentiment['timeOpen'] = pd.to_datetime(sentiment['timeOpen'], utc=True)
+        
+        # Select only the columns we need
+        required_cols = ['timeOpen', 'sentiment_mean', 'sentiment_neg_mean', 
+                        'relevance_score', 'events_count', 'negative_spike_flag']
+        
+        # Add missing columns with default values
+        for col in required_cols:
+            if col not in sentiment.columns and col != 'timeOpen':
+                sentiment[col] = 0.0
+        
+        sentiment = sentiment[required_cols]
+        
+        logger.info(f"Loaded {len(sentiment)} sentiment records")
+        logger.info(f"Sentiment date range: {sentiment['timeOpen'].min()} to {sentiment['timeOpen'].max()}")
+        
+        return sentiment
+    except Exception as e:
+        logger.error(f"Error loading sentiment data: {e}")
+        return pd.DataFrame()
+
+
+def load_orderbook_data() -> pd.DataFrame:
+    """
+    Load orderbook depth data from orderbook_depth.csv.
+    """
+    logger.info("Loading orderbook data...")
+    
+    if not os.path.exists(ORDERBOOK_CSV):
+        logger.warning(f"{ORDERBOOK_CSV} not found - orderbook features will be zero-filled")
+        return pd.DataFrame()
+    
+    try:
+        orderbook = pd.read_csv(ORDERBOOK_CSV, low_memory=False)
+        orderbook['timeOpen'] = pd.to_datetime(orderbook['timeOpen'], utc=True)
+        
+        required_cols = ['timeOpen', 'mid_price', 'spread', 'bid_depth_20', 'ask_depth_20', 
+                         'imbalance', 'largest_wall_dist', 'cum_depth_10bps']
+        
+        for col in required_cols:
+            if col not in orderbook.columns and col != 'timeOpen':
+                orderbook[col] = 0.0
+        
+        orderbook = orderbook[required_cols]
+        logger.info(f"Loaded {len(orderbook)} orderbook records")
+        return orderbook
+    except Exception as e:
+        logger.error(f"Error loading orderbook data: {e}")
+        return pd.DataFrame()
+
+
+def load_macro_data() -> pd.DataFrame:
+    """
+    Load macro factors data from macro_factors.csv.
+    """
+    logger.info("Loading macro data...")
+    
+    if not os.path.exists(MACRO_CSV):
+        logger.warning(f"{MACRO_CSV} not found - macro features will be zero-filled")
+        return pd.DataFrame()
+    
+    try:
+        macro = pd.read_csv(MACRO_CSV, low_memory=False)
+        macro['timeOpen'] = pd.to_datetime(macro['timeOpen'], utc=True)
+        
+        required_cols = ['timeOpen', 'spx_close', 'dxy_close', 'returns_spx', 'returns_dxy', 'z_spx', 'z_dxy']
+        
+        for col in required_cols:
+            if col not in macro.columns and col != 'timeOpen':
+                macro[col] = 0.0
+        
+        macro = macro[required_cols]
+        logger.info(f"Loaded {len(macro)} macro records")
+        return macro
+    except Exception as e:
+        logger.error(f"Error loading macro data: {e}")
+        return pd.DataFrame()
 
 
 def calculate_rsi(series: pd.Series, period: int = 14) -> pd.Series:
@@ -176,9 +274,93 @@ def make_features(candles: pd.DataFrame) -> pd.DataFrame:
     
     # Check for missing values
     missing_count = features.isnull().sum().sum()
-    logger.info(f"Features created with {missing_count} missing values (expected due to lag/rolling)")
+    logger.info(f"Technical features created with {missing_count} missing values (expected due to lag/rolling)")
     
     return features
+
+
+def merge_sentiment_features(features: pd.DataFrame, sentiment: pd.DataFrame) -> pd.DataFrame:
+    """
+    Merge sentiment features with technical features.
+    """
+    logger.info("Merging sentiment features...")
+    
+    if sentiment.empty:
+        logger.warning("No sentiment data available - adding zero-filled sentiment columns")
+        features['sentiment_mean'] = 0.0
+        features['sentiment_neg_mean'] = 0.0
+        features['relevance_score'] = 0.0
+        features['events_count'] = 0.0
+        features['negative_spike_flag'] = 0.0
+        return features
+    
+    # Merge on timeOpen
+    merged = pd.merge(features, sentiment, on='timeOpen', how='left')
+    
+    # Forward-fill sentiment values
+    sentiment_cols = ['sentiment_mean', 'sentiment_neg_mean', 'relevance_score', 
+                     'events_count', 'negative_spike_flag']
+    
+    for col in sentiment_cols:
+        if col in merged.columns:
+            merged[col] = merged[col].ffill().bfill().fillna(0.0)
+    
+    return merged
+
+
+def merge_orderbook_features(features: pd.DataFrame, orderbook: pd.DataFrame) -> pd.DataFrame:
+    """
+    Merge orderbook features with technical features.
+    """
+    logger.info("Merging orderbook features...")
+    
+    orderbook_cols = ['mid_price', 'spread', 'bid_depth_20', 'ask_depth_20', 
+                      'imbalance', 'largest_wall_dist', 'cum_depth_10bps']
+                      
+    if orderbook.empty:
+        logger.warning("No orderbook data available - adding zero-filled columns")
+        for col in orderbook_cols:
+            features[col] = 0.0
+        return features
+    
+    # Merge on timeOpen
+    merged = pd.merge(features, orderbook, on='timeOpen', how='left')
+    
+    # Forward-fill orderbook values
+    for col in orderbook_cols:
+        if col in merged.columns:
+            merged[col] = merged[col].ffill().bfill().fillna(0.0)
+    
+    return merged
+
+
+def merge_macro_features(features: pd.DataFrame, macro: pd.DataFrame) -> pd.DataFrame:
+    """
+    Merge macro factors with technical features.
+    """
+    logger.info("Merging macro features...")
+    
+    macro_cols = ['spx_close', 'dxy_close', 'returns_spx', 'returns_dxy', 'z_spx', 'z_dxy']
+                      
+    if macro.empty:
+        logger.warning("No macro data available - adding zero-filled columns")
+        for col in macro_cols:
+            features[col] = 0.0
+        return features
+    
+    # Merge on timeOpen
+    merged = pd.merge(features, macro, on='timeOpen', how='left')
+    
+    # Forward-fill macro values (markets close, but the state persists)
+    for col in macro_cols:
+        if col in merged.columns:
+            merged[col] = merged[col].ffill().bfill().fillna(0.0)
+    
+    logger.info(f"Merged features shape: {merged.shape}")
+    non_zero_macro = (merged[macro_cols] != 0).any(axis=1).sum()
+    logger.info(f"Macro features coverage: {non_zero_macro}/{len(merged)} rows have data")
+    
+    return merged
 
 
 def fit_and_apply_scalers(features: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
@@ -237,32 +419,44 @@ def fit_and_apply_scalers(features: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
 def save_outputs(candles: pd.DataFrame, features: pd.DataFrame, 
                  normalized: pd.DataFrame, scalers: dict) -> None:
     """
-    Save all output files.
-    
-    Args:
-        candles: Raw merged candles
-        features: Engineered features
-        normalized: Normalized features
-        scalers: Fitted scalers
+    Save all output files atomically to prevent race conditions.
     """
-    logger.info("Saving outputs...")
+    logger.info("Saving outputs atomically...")
     
-    # Save raw dataset
-    candles.to_csv(OUTPUT_DATASET, index=False)
-    logger.info(f"Saved {len(candles)} candles to {OUTPUT_DATASET}")
+    output_jobs = [
+        (candles, OUTPUT_DATASET),
+        (features, OUTPUT_FEATURES),
+        (normalized, OUTPUT_NORMALIZED)
+    ]
     
-    # Save features
-    features.to_csv(OUTPUT_FEATURES, index=False)
-    logger.info(f"Saved {len(features)} feature rows to {OUTPUT_FEATURES}")
-    
-    # Save normalized features
-    normalized.to_csv(OUTPUT_NORMALIZED, index=False)
-    logger.info(f"Saved {len(normalized)} normalized rows to {OUTPUT_NORMALIZED}")
+    def safe_replace(tmp, target):
+        max_retries = 5
+        for i in range(max_retries):
+            try:
+                if os.path.exists(target):
+                    os.replace(tmp, target)
+                else:
+                    os.rename(tmp, target)
+                return True
+            except PermissionError:
+                if i < max_retries - 1:
+                    time.sleep(0.5) # Wait for dashboard to release lock
+                    continue
+                raise
+        return False
+
+    for df, target_path in output_jobs:
+        tmp_path = target_path + ".tmp"
+        df.to_csv(tmp_path, index=False)
+        safe_replace(tmp_path, target_path)
+        logger.info(f"Updated {target_path}")
     
     # Save scalers
-    with open(SCALERS_FILE, 'wb') as f:
+    scaler_tmp = SCALERS_FILE + ".tmp"
+    with open(scaler_tmp, 'wb') as f:
         pickle.dump(scalers, f)
-    logger.info(f"Saved {len(scalers)} scalers to {SCALERS_FILE}")
+    safe_replace(scaler_tmp, SCALERS_FILE)
+    logger.info(f"Updated {SCALERS_FILE}")
 
 
 def main():
@@ -273,8 +467,26 @@ def main():
         # Load and merge candles
         candles = load_candles()
         
-        # Create features
+        # Load sentiment data
+        sentiment = load_sentiment_data()
+        
+        # Load orderbook data
+        orderbook = load_orderbook_data()
+        
+        # Load macro data
+        macro = load_macro_data()
+        
+        # Create technical features
         features = make_features(candles)
+        
+        # Merge sentiment features
+        features = merge_sentiment_features(features, sentiment)
+        
+        # Merge orderbook features
+        features = merge_orderbook_features(features, orderbook)
+        
+        # Merge macro features
+        features = merge_macro_features(features, macro)
         
         # Fit and apply scalers
         normalized, scalers = fit_and_apply_scalers(features)
@@ -288,7 +500,11 @@ def main():
         logger.info("\n=== Summary ===")
         logger.info(f"Total candles: {len(candles)}")
         logger.info(f"Date range: {candles['timeOpen'].min()} to {candles['timeOpen'].max()}")
-        logger.info(f"Features created: {len(features.columns) - 1}")  # -1 for timeOpen
+        logger.info(f"Total features created: {len(features.columns) - 1}")  # -1 for timeOpen
+        logger.info(f"  - Technical features: 20")
+        logger.info(f"  - Sentiment features: 5")
+        logger.info(f"  - Orderbook features: 7")
+        logger.info(f"  - Macro features: 6")
         logger.info(f"Output files:")
         logger.info(f"  - {OUTPUT_DATASET}")
         logger.info(f"  - {OUTPUT_FEATURES}")

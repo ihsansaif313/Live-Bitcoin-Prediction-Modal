@@ -12,7 +12,7 @@ import yaml
 import sys
 import json
 import os
-from typing import List
+from typing import List, Optional, Callable
 
 import certifi
 
@@ -118,8 +118,9 @@ def normalize_klines(raw: List[List]) -> pd.DataFrame:
     ])
     
     # Convert to proper types
-    df['timeOpen'] = pd.to_datetime(df['open_time'], unit='ms', utc=True)
-    df['timeClose'] = pd.to_datetime(df['close_time'], unit='ms', utc=True)
+    df['timeOpen'] = pd.to_datetime(df['open_time'], unit='ms', utc=True, errors='coerce')
+    df['timeClose'] = pd.to_datetime(df['close_time'], unit='ms', utc=True, errors='coerce')
+    df = df.dropna(subset=['timeOpen', 'timeClose'])
     df['open'] = df['open'].astype(float)
     df['high'] = df['high'].astype(float)
     df['low'] = df['low'].astype(float)
@@ -133,22 +134,23 @@ def normalize_klines(raw: List[List]) -> pd.DataFrame:
     return df
 
 
-def paginate_6_months(symbol: str, interval: str) -> pd.DataFrame:
+def collect_historical_data(symbol: str, interval: str, lookback_days: int, progress_callback: Optional[Callable[[float, str], None]] = None) -> pd.DataFrame:
     """
-    Fetch 6 months of historical klines data by paginating through time ranges.
+    Fetch historical klines data by paginating through time ranges.
     
     Args:
         symbol: Trading pair (e.g., "BTCUSDT")
         interval: Kline interval (e.g., "1m")
+        lookback_days: Number of days to look back
     
     Returns:
         DataFrame with all historical data
     """
-    # Calculate time range (6 months ago to now)
+    # Calculate time range
     end_time = datetime.now(timezone.utc)
-    start_time = end_time - timedelta(days=60)  # Reduced from 180 to 60 days for Streamlit RAM safety
+    start_time = end_time - timedelta(days=lookback_days)
     
-    logger.info(f"Fetching data from {start_time} to {end_time}")
+    logger.info(f"Fetching {lookback_days} days of data from {start_time} to {end_time}")
     
     # Convert to milliseconds
     current_start_ms = int(start_time.timestamp() * 1000)
@@ -176,10 +178,17 @@ def paginate_6_months(symbol: str, interval: str) -> pd.DataFrame:
         last_close_time = klines[-1][6]
         current_start_ms = last_close_time + 1
         
-        # Log progress
+        # Calculate progress
         progress_pct = ((current_start_ms - int(start_time.timestamp() * 1000)) / 
                        (current_end_ms - int(start_time.timestamp() * 1000))) * 100
-        logger.info(f"Progress: {min(progress_pct, 100.0):.1f}% | Last candle: {datetime.fromtimestamp(last_close_time/1000, tz=timezone.utc)}")
+        progress_pct = min(progress_pct, 100.0)
+        last_candle_str = datetime.fromtimestamp(last_close_time/1000, tz=timezone.utc).strftime('%Y-%m-%d %H:%M')
+        
+        # Restore original log format
+        logger.info(f"Progress: {progress_pct:.1f}% | Last candle: {last_candle_str}")
+        
+        if progress_callback:
+            progress_callback(progress_pct, last_candle_str)
         
         # Tiny sleep to be polite to the API and avoid triggering cloud IP filters
         time.sleep(0.1)
@@ -229,8 +238,26 @@ def save_csv(df: pd.DataFrame, path: str) -> None:
     else:
         logger.warning(f"Total gaps found: {gaps_found}")
     
+    def safe_replace(tmp, target):
+        max_retries = 5
+        for i in range(max_retries):
+            try:
+                if os.path.exists(target):
+                    os.replace(tmp, target)
+                else:
+                    os.rename(tmp, target)
+                return True
+            except PermissionError:
+                if i < max_retries - 1:
+                    time.sleep(0.5)
+                    continue
+                raise
+        return False
+
     # Save to CSV
-    df.to_csv(path, index=False)
+    tmp_out = path + ".tmp"
+    df.to_csv(tmp_out, index=False)
+    safe_replace(tmp_out, path)
     logger.info(f"Data saved to {path}")
     logger.info(f"Total rows: {len(df)}")
     logger.info(f"Date range: {df['timeOpen'].min()} to {df['timeOpen'].max()}")
@@ -267,12 +294,13 @@ def main():
     
     symbol = config.get('params', {}).get('symbol', 'BTCUSDT')
     output_path = config.get('paths', {}).get('historical_data', OUTPUT_CSV)
+    lookback_days = config.get('params', {}).get('lookback_days', 365)
     
-    print(f"DEBUG: Target Symbol: {symbol}, Output: {output_path}", flush=True)
+    print(f"DEBUG: Target Symbol: {symbol}, Output: {output_path}, Lookback: {lookback_days} days", flush=True)
     
     try:
-        # Fetch 6 months of BTC/USDT 1-minute data
-        df = paginate_6_months(symbol=symbol, interval="1m")
+        # Fetch historical data
+        df = collect_historical_data(symbol=symbol, interval="1m", lookback_days=lookback_days)
         
         if df.empty:
             msg = "No data fetched from Binance API. Check internet connection or API availability."

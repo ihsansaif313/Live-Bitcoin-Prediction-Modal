@@ -1,26 +1,25 @@
 """
 Bitcoin Model Training Script
-Trains Baseline and Deep Learning models for BTC price prediction.
+Trains Baseline (SKLearn/XGB) and State-of-the-Art Deep Learning (PyTorch) models for BTC price prediction.
 """
 
 import os
 import pickle
 import logging
-import gc  # Memory management
+import gc
+import yaml
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, Dataset, TensorDataset
 from typing import Tuple, Dict, List, Optional
-
-# Machine Learning
+import xgboost as xgb
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import mean_squared_error, mean_absolute_error, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-from xgboost import XGBRegressor, XGBClassifier
-
-# Time Series (Statsmodels)
-from statsmodels.tsa.arima.model import ARIMA
+from sklearn.metrics import mean_squared_error, mean_absolute_error, accuracy_score, f1_score
 
 # Configure logging
 logging.basicConfig(
@@ -29,20 +28,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Device configuration
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+logger.info(f"Using device: {device}")
+
 # Status reporting
 import json
 STATUS_FILE = "logs/setup_status.json"
 
 def report_progress(progress, message, detail=""):
-    """Update shared status file."""
     try:
-        # Only update if file exists (implies orchestration)
-        if os.path.exists("logs"): 
-             # We want to preserve status='running' from orchestrator
-             # So we read first? Or just overwrite specific fields?
-             # Simple overwrite is safer for now, orchestration loop handles the rest?
-             # Actually, simpler: write a full valid status object
-             with open(STATUS_FILE, "w") as f:
+        if os.path.exists("logs"):
+            with open(STATUS_FILE, "w") as f:
                 json.dump({
                     "status": "running",
                     "progress": progress,
@@ -52,394 +49,402 @@ def report_progress(progress, message, detail=""):
     except Exception:
         pass
 
-# Deep Learning (TensorFlow/Keras)
-try:
-    import tensorflow as tf
-    
-    # GPU Configuration
-    gpus = tf.config.list_physical_devices('GPU')
-    if gpus:
-        try:
-            for gpu in gpus:
-                tf.config.experimental.set_memory_growth(gpu, True)
-            logger.info(f"GPU detected: {len(gpus)} device(s). Using GPU for training.")
-        except RuntimeError as e:
-            logger.warning(f"GPU configuration failed: {e}")
-    else:
-        import platform
-        msg = "No GPU detected. Using CPU for training."
-        if platform.system() == "Windows":
-             msg += "\n[NOTE] TensorFlow > 2.10 on native Windows is CPU-only by design. To enable GPU, use WSL2 or downgrade to TF 2.10 (only checks if you have a compatible NVIDIA GPU)."
-        logger.info(msg)
-
-    from tensorflow.keras.models import Sequential, Model
-    from tensorflow.keras.layers import LSTM, GRU, Dense, Dropout, Input, LayerNormalization, MultiHeadAttention, GlobalAveragePooling1D
-    from tensorflow.keras.callbacks import EarlyStopping
-    TF_AVAILABLE = True
-except ImportError:
-    logger.warning("TensorFlow/Keras not found. Deep learning models will be skipped. (Likely due to Python 3.14 alpha/beta version conflict)")
-    TF_AVAILABLE = False
-
 # Constants
 FEATURES_CSV = "btc_features_normalized.csv"
 DATASET_CSV = "btc_dataset.csv"
 MODELS_DIR = "models"
 REPORTS_DIR = "reports"
-WINDOW_SIZE = 60  # 60 minutes sequence
-BATCH_SIZE = 64
-EPOCHS = 10  # Reduced for reliability
+# Defaults (overridden by config in main)
+WINDOW_SIZE = 180 
+BATCH_SIZE = 128
+EPOCHS = 15
+LEARNING_RATE = 0.001
 
-def make_sequences(features: np.ndarray, targets_reg: np.ndarray, targets_cls: np.ndarray, window_size: int):
-    """
-    Create sliding window sequences for Deep Learning models.
-    Pre-allocates numpy array for memory efficiency.
-    """
-    n = len(features) - window_size
-    if n <= 0:
-        return np.array([]), np.array([]), np.array([])
-        
-    # Pre-allocate
-    X = np.zeros((n, window_size, features.shape[1]), dtype=np.float32)
-    y_reg = np.zeros(n, dtype=np.float32)
-    y_cls = np.zeros(n, dtype=np.int32)
-    
-    for i in range(n):
-        X[i] = features[i:(i + window_size)]
-        y_reg[i] = targets_reg[i + window_size]
-        y_cls[i] = targets_cls[i + window_size]
-        
-    return X, y_reg, y_cls
+# --- PyTorch Model Definitions ---
+
+class LSTMModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim=128, num_layers=3, output_dim=1, task='regression'):
+        super(LSTMModel, self).__init__()
+        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers, batch_first=True, dropout=0.3)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.task = task
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out = self.fc(out[:, -1, :])
+        if self.task == 'classification':
+            out = torch.sigmoid(out)
+        return out
+
+class TransformerModel(nn.Module):
+    def __init__(self, input_dim, d_model=128, nhead=8, num_layers=3, output_dim=1, task='regression'):
+        super(TransformerModel, self).__init__()
+        self.embedding = nn.Linear(input_dim, d_model)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, dim_feedforward=256, batch_first=True)
+        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.fc = nn.Linear(d_model, output_dim)
+        self.task = task
+
+    def forward(self, x):
+        x = self.embedding(x)
+        x = self.transformer_encoder(x)
+        x = self.fc(x[:, -1, :]) # Take last sequence element
+        if self.task == 'classification':
+            x = torch.sigmoid(x)
+        return x
+
+# --- Helper Functions ---
+
+class TimeSeriesDataset(Dataset):
+    def __init__(self, features, targets_reg, targets_cls, window_size):
+        self.features = torch.tensor(features, dtype=torch.float32)
+        self.targets_reg = torch.tensor(targets_reg, dtype=torch.float32)
+        self.targets_cls = torch.tensor(targets_cls, dtype=torch.float32)
+        self.window_size = window_size
+        self.length = len(features) - window_size
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, idx):
+        # Lazy slicing: Creating the sequence only when requested
+        # X: (window_size, num_features)
+        X = self.features[idx : idx + self.window_size]
+        # y: scalar
+        y_reg = self.targets_reg[idx + self.window_size]
+        y_cls = self.targets_cls[idx + self.window_size]
+        return X, y_reg, y_cls
 
 def load_and_prepare_data():
-    """
-    Load data and create regression/classification targets.
-    """
     logger.info("Loading and preparing data...")
-    import time
+    # Load Config for threshold
+    config = {}
+    if os.path.exists("config.yaml"):
+        with open("config.yaml", "r") as f:
+            config = yaml.safe_load(f)
     
-    def read_csv_with_retry(filepath, retries=5, delay=2):
-        for i in range(retries):
-            try:
-                df = pd.read_csv(filepath)
-                if not df.empty:
-                    return df
-            except (pd.errors.EmptyDataError, OSError):
-                pass
-            logger.warning(f"Retrying to read {filepath} (attempt {i+1}/{retries})...")
-            time.sleep(delay)
-        return pd.read_csv(filepath)  # Final attempt, will raise error if still fails
+    threshold = config.get('params', {}).get('min_target_return', 0.001)
+    logger.info(f"Using classification threshold: {threshold*100:.2f}%")
 
     try:
-        features_df = read_csv_with_retry(FEATURES_CSV)
-        dataset_df = read_csv_with_retry(DATASET_CSV)
+        features_df = pd.read_csv(FEATURES_CSV, on_bad_lines='skip', low_memory=False)
+        dataset_df = pd.read_csv(DATASET_CSV, on_bad_lines='skip', low_memory=False)
     except Exception as e:
         logger.error(f"Failed to load data files: {e}")
         raise
-    
-    # Ensure they are aligned by dropping first N rows where features might be NaN
-    # build_dataset.py should have handled this, but we filter any remaining NaNs
     combined = pd.merge(features_df, dataset_df[['timeOpen', 'close']], on='timeOpen')
     combined = combined.dropna().reset_index(drop=True)
-    
-    # Regression target: Percentage Change (Return) for the NEXT 15 minutes
-    # We predict the 15-minute move for better trend-following and less noise
     combined['target_reg'] = (combined['close'].shift(-15) - combined['close']) / combined['close']
-    
-    # Clip extreme returns (outliers) to [-0.10, 0.10] (10% in 15 mins is plenty)
     combined['target_reg'] = combined['target_reg'].clip(-0.10, 0.10)
     
-    # Classification target: 1 if 15-min return > 0 else 0
-    combined['target_cls'] = (combined['target_reg'] > 0).astype(int)
+    # Classification logic: Label as 1 (UP) ONLY if return > threshold
+    # Moves within [-threshold, threshold] are treated as 0 (NO BIAS/STAY)
+    combined['target_cls'] = (combined['target_reg'] >= threshold).astype(int)
     
-    # Drop rows without target (the last row)
     combined = combined.dropna().reset_index(drop=True)
-    
-    # Split features and targets
     feature_cols = [c for c in features_df.columns if c != 'timeOpen']
     X_data = combined[feature_cols].values
     y_reg = combined['target_reg'].values
     y_cls = combined['target_cls'].values
-    
-    # Time-aware Split
     n = len(combined)
     train_end = int(n * 0.7)
     val_end = int(n * 0.85)
-    
     splits = {
         'train': (X_data[:train_end], y_reg[:train_end], y_cls[:train_end]),
         'val': (X_data[train_end:val_end], y_reg[train_end:val_end], y_cls[train_end:val_end]),
         'test': (X_data[val_end:], y_reg[val_end:], y_cls[val_end:])
     }
-    
     logger.info(f"Split sizes: Train={len(splits['train'][0])}, Val={len(splits['val'][0])}, Test={len(splits['test'][0])}")
     return splits, feature_cols
 
-def train_baselines(splits, feature_cols):
-    """
-    Train Baseline models (Univariate and Tabular).
-    """
-    logger.info("Training baseline models...")
-    X_train, y_train_reg, y_train_cls = splits['train']
-    X_test, y_test_reg, y_test_cls = splits['test']
+def train_pytorch_model(model, train_loader, val_loader, model_name="model", task='regression', existing_weights=None):
+    if existing_weights:
+        try:
+            model.load_state_dict(existing_weights)
+            logger.info(f"Warm-starting {model_name} with existing weights...")
+        except:
+            logger.warning(f"Could not load existing weights for {model_name} - training from scratch.")
+    model.to(device)
+    criterion = nn.MSELoss() if task == 'regression' else nn.BCELoss()
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
-    results = {}
+    temp_file = f"best_temp_{model_name}.pth"
+    best_val_loss = float('inf')
+    patience = 5
+    counter = 0
+    
+    # Pre-save initial state in case training fails early
+    torch.save(model.state_dict(), temp_file)
+    
+    for epoch in range(EPOCHS):
+        model.train()
+        train_loss = 0
+        for batch_X, batch_y in train_loader:
+            batch_X, batch_y = batch_X.to(device), batch_y.to(device).unsqueeze(1)
+            optimizer.zero_grad()
+            outputs = model(batch_X)
+            loss = criterion(outputs, batch_y)
+            loss.backward()
+            optimizer.step()
+            train_loss += loss.item()
+        model.eval()
+        val_loss = 0
+        with torch.no_grad():
+            for batch_X, batch_y in val_loader:
+                batch_X, batch_y = batch_X.to(device), batch_y.to(device).unsqueeze(1)
+                outputs = model(batch_X)
+                loss = criterion(outputs, batch_y)
+                val_loss += loss.item()
+        val_loss /= len(val_loader)
+        logger.info(f"{model_name} - Epoch {epoch + 1}/{EPOCHS}, Loss: {train_loss / len(train_loader):.6f}, Val Loss: {val_loss:.6f}")
+        
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), temp_file)
+            counter = 0
+        else:
+            counter += 1
+            if counter >= patience:
+                logger.info(f"Early stopping {model_name} at epoch {epoch}")
+                break
+    
+    try:
+        model.load_state_dict(torch.load(temp_file, weights_only=True))
+        if os.path.exists(temp_file): os.remove(temp_file)
+    except Exception as e:
+        logger.error(f"Error loading best {model_name}: {e}")
+        
+    return model
 
-    # 1. Random Forest Regressor
+# --- Main Training Logic ---
+
+def train_baselines(splits, feature_cols, existing_models=None):
+    X_train, y_reg_train, y_cls_train = splits['train']
+    models = {}
+    
+    logger.info("  Training XGBoost Regressor...")
+    xgb_reg = xgb.XGBRegressor(n_estimators=100, learning_rate=0.05, max_depth=5, random_state=42)
+    xgb_model_reg = None
+    if existing_models and 'XGB_Reg' in existing_models:
+        xgb_model_reg = existing_models['XGB_Reg']
+    xgb_reg.fit(X_train, y_reg_train, xgb_model=xgb_model_reg)
+    models['XGB_Reg'] = xgb_reg
+    
     logger.info("  Training Random Forest Regressor...")
     rf_reg = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42, n_jobs=-1)
-    rf_reg.fit(X_train, y_train_reg)
-    results['RF_Reg'] = rf_reg
-
-    # 2. XGBoost Regressor
-    logger.info("  Training XGBoost Regressor...")
-    xgb_reg = XGBRegressor(n_estimators=100, learning_rate=0.05, max_depth=6, random_state=42)
-    xgb_reg.fit(X_train, y_train_reg)
-    results['XGB_Reg'] = xgb_reg
-
-    # 3. Logistic Regression
-    logger.info("  Training Logistic Regression Classifier...")
-    lr_cls = LogisticRegression(max_iter=1000, random_state=42)
-    lr_cls.fit(X_train, y_train_cls)
-    results['LR_Cls'] = lr_cls
-
-    # 4. XGBoost Classifier
+    rf_reg.fit(X_train, y_reg_train)
+    models['RF_Reg'] = rf_reg
+    
     logger.info("  Training XGBoost Classifier...")
-    xgb_cls = XGBClassifier(n_estimators=100, max_depth=6, random_state=42)
-    xgb_cls.fit(X_train, y_train_cls)
-    results['XGB_Cls'] = xgb_cls
-
-    # 5. ARIMA (Univariate - on a subset for speed check)
-    # ARIMA is slow on 200k rows, we'll just show the function exists or use small tail
-    logger.info("  Training ARIMA (on test set tail for performance verification)...")
-    try:
-        # ARIMA on original prices from test set
-        history = list(y_train_reg[-1000:]) # Use last 1000 for "warmup" or similar concept
-        # We don't "train" ARIMA in bulk like others, usually it's for short-term forecast
-        results['ARIMA'] = None # Placeholder since it's used differently
-    except Exception as e:
-        logger.warning(f"ARIMA training failed: {e}")
-
-    return results
-
-def train_deep_models(splits, input_dim):
-    """
-    Train LSTM, GRU, and Transformer models.
-    """
-    if not TF_AVAILABLE:
-        logger.warning("Skipping Deep Learning models as TensorFlow is not available.")
-        return {}, (None, None, None)
-
-    # Memory Cleanup
-    import tensorflow as tf
-    tf.keras.backend.clear_session()
-    gc.collect()
-
-    logger.info("Preparing sequences for Deep Learning...")
-    # Create sequences one by one / manage memory if needed
-    X_train_seq, y_train_reg_seq, y_train_cls_seq = make_sequences(*splits['train'], WINDOW_SIZE)
-    logger.info(f"  Train sequences: {X_train_seq.shape}")
+    xgb_cls = xgb.XGBClassifier(n_estimators=100, learning_rate=0.05, max_depth=5, random_state=42, eval_metric='logloss')
+    xgb_model_cls = None
+    if existing_models and 'XGB_Cls' in existing_models:
+        xgb_model_cls = existing_models['XGB_Cls']
+    xgb_cls.fit(X_train, y_cls_train, xgb_model=xgb_model_cls)
+    models['XGB_Cls'] = xgb_cls
     
-    X_val_seq, y_val_reg_seq, y_val_cls_seq = make_sequences(*splits['val'], WINDOW_SIZE)
-    logger.info(f"  Val sequences: {X_val_seq.shape}")
-    
-    X_test_seq, y_test_reg_seq, y_test_cls_seq = make_sequences(*splits['test'], WINDOW_SIZE)
-    logger.info(f"  Test sequences: {X_test_seq.shape}")
-    
-    results = {}
-    
-    # 1. LSTM (Regression)
-    logger.info("  Training LSTM Regressor...")
-    lstm_reg = Sequential([
-        Input(shape=(WINDOW_SIZE, input_dim)),
-        LSTM(64, return_sequences=True),
-        Dropout(0.2),
-        LSTM(32),
-        Dense(1, activation='tanh') # Tanh allows positive and negative returns
-    ])
-    lstm_reg.compile(optimizer='adam', loss='mse')
-    lstm_reg.fit(X_train_seq, y_train_reg_seq, validation_data=(X_val_seq, y_val_reg_seq), 
-                 epochs=EPOCHS, batch_size=BATCH_SIZE, 
-                 callbacks=[EarlyStopping(patience=3, restore_best_weights=True)], verbose=0)
-    results['LSTM_Reg'] = lstm_reg
+    return models
 
-    # 2. GRU (Classification)
-    logger.info("  Training GRU Classifier...")
-    gru_cls = Sequential([
-        Input(shape=(WINDOW_SIZE, input_dim)),
-        GRU(64, return_sequences=False),
-        Dropout(0.2),
-        Dense(1, activation='sigmoid')
-    ])
-    gru_cls.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    gru_cls.fit(X_train_seq, y_train_cls_seq, validation_data=(X_val_seq, y_val_cls_seq),
-                epochs=EPOCHS, batch_size=BATCH_SIZE,
-                callbacks=[EarlyStopping(patience=3, restore_best_weights=True)], verbose=0)
-    results['GRU_Cls'] = gru_cls
+def train_deep_models(splits, input_dim, existing_weights=None):
+    if not existing_weights: existing_weights = {}
+    logger.info("Preparing using Lazy Loading Dataset for PyTorch...")
+    
+    # Use custom dataset for memory efficiency
+    train_dataset = TimeSeriesDataset(*splits['train'], WINDOW_SIZE)
+    val_dataset = TimeSeriesDataset(*splits['val'], WINDOW_SIZE)
+    test_dataset = TimeSeriesDataset(*splits['test'], WINDOW_SIZE)
+    
+    # Create DataLoaders (workers=0 for Windows compatibility)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
+    
+    # Get a sample for dimension check
+    sample_X, _, _ = train_dataset[0]
+    seq_len, n_feats = sample_X.shape
+    logger.info(f"Input shape: ({seq_len}, {n_feats})")
+    
+    models = {}
+    
+    # Train LSTM Regressor
+    # Note: Dataset returns (X, y_reg, y_cls). We need to adapt the loader loop or the training function 
+    # slightly, but train_pytorch_model expects (X, y) pairs.
+    # We will wrap the loaders to yield the correct target.
+    
+    class TaskWrapper:
+        def __init__(self, loader, task_idx):
+            self.loader = loader
+            self.task_idx = task_idx # 1 for reg, 2 for cls
+        def __iter__(self):
+            for batch in self.loader:
+                yield batch[0], batch[self.task_idx]
+        def __len__(self):
+            return len(self.loader)
 
-    # 3. Simple Transformer (Regression)
-    logger.info("  Training Transformer Regressor...")
-    inputs = Input(shape=(WINDOW_SIZE, input_dim))
-    x = LayerNormalization()(inputs)
-    # Multi-head attention
-    attn_output = MultiHeadAttention(num_heads=4, key_dim=input_dim)(x, x)
-    x = Dropout(0.1)(attn_output)
-    x = LayerNormalization()(x + inputs) # residual
-    x = GlobalAveragePooling1D()(x)
-    x = Dense(32, activation='relu')(x)
-    outputs = Dense(1)(x)
+    logger.info("  Training PyTorch LSTM Regressor...")
+    lstm_reg = LSTMModel(input_dim=input_dim, task='regression')
+    train_loader_reg = TaskWrapper(train_loader, 1) # Yields X, y_reg
+    val_loader_reg = TaskWrapper(val_loader, 1)
+    models['LSTM_Reg'] = train_pytorch_model(lstm_reg, train_loader_reg, val_loader_reg, "LSTM_Reg", 'regression', existing_weights.get('LSTM_Reg'))
     
-    transformer_reg = Model(inputs, outputs)
-    transformer_reg.compile(optimizer='adam', loss='mse')
-    transformer_reg.fit(X_train_seq, y_train_reg_seq, validation_data=(X_val_seq, y_val_reg_seq),
-                        epochs=EPOCHS, batch_size=BATCH_SIZE,
-                        callbacks=[EarlyStopping(patience=3, restore_best_weights=True)], verbose=0)
-    results['Transformer_Reg'] = transformer_reg
+    logger.info("  Training PyTorch Transformer Regressor...")
+    trans_reg = TransformerModel(input_dim=input_dim, task='regression')
+    models['Transformer_Reg'] = train_pytorch_model(trans_reg, train_loader_reg, val_loader_reg, "Transformer_Reg", 'regression', existing_weights.get('Transformer_Reg'))
+    
+    logger.info("  Training PyTorch LSTM Classifier...")
+    lstm_cls = LSTMModel(input_dim=input_dim, task='classification')
+    train_loader_cls = TaskWrapper(train_loader, 2) # Yields X, y_cls
+    val_loader_cls = TaskWrapper(val_loader, 2)
+    models['LSTM_Cls'] = train_pytorch_model(lstm_cls, train_loader_cls, val_loader_cls, 'LSTM_Cls', 'classification', existing_weights.get('LSTM_Cls'))
 
-    # Return only test sequences to save RAM, train/val can be discarded now
-    # We copy them to ensure they aren't deleted by accident if needed elsewhere
-    X_test_ret = X_test_seq.copy()
-    y_reg_ret = y_test_reg_seq.copy()
-    y_cls_ret = y_test_cls_seq.copy()
+    logger.info("  Training PyTorch Transformer Classifier...")
+    trans_cls = TransformerModel(input_dim=input_dim, task='classification')
+    models['Transformer_Cls'] = train_pytorch_model(trans_cls, train_loader_cls, val_loader_cls, 'Transformer_Cls', 'classification', existing_weights.get('Transformer_Cls'))
+
+    # Prepare test data for evaluation
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
     
-    # Cleanup big arrays
-    del X_train_seq, y_train_reg_seq, y_train_cls_seq
-    del X_val_seq, y_val_reg_seq, y_val_cls_seq
-    del X_test_seq, y_test_reg_seq, y_test_cls_seq
-    gc.collect()
+    # Extract test sequences and targets for evaluation function
+    X_test_seq_list = []
+    y_test_reg_seq_list = []
+    y_test_cls_seq_list = []
+    for batch_X, batch_y_reg, batch_y_cls in test_loader:
+        X_test_seq_list.append(batch_X.cpu().numpy())
+        y_test_reg_seq_list.append(batch_y_reg.cpu().numpy())
+        y_test_cls_seq_list.append(batch_y_cls.cpu().numpy())
     
-    return results, (X_test_ret, y_reg_ret, y_cls_ret)
+    X_test_seq = np.concatenate(X_test_seq_list, axis=0)
+    y_test_reg_seq = np.concatenate(y_test_reg_seq_list, axis=0)
+    y_test_cls_seq = np.concatenate(y_test_cls_seq_list, axis=0)
+
+    return models, (X_test_seq, y_test_reg_seq, y_test_cls_seq)
 
 def evaluate(baseline_models, deep_models, splits, seq_test):
-    """
-    Evaluate all models and return metrics.
-    """
     logger.info("Evaluating models...")
-    X_test, y_test_reg, y_test_cls = splits['test']
+    X_test_tab, y_test_reg_tab, y_test_cls_tab = splits['test']
     X_test_seq, y_test_reg_seq, y_test_cls_seq = seq_test
-    
     metrics = []
-
-    # Evaluate Baselines
+    
     for name, model in baseline_models.items():
-        if model is None: continue
         if '_Reg' in name:
-            preds = model.predict(X_test)
-            rmse = np.sqrt(mean_squared_error(y_test_reg, preds))
-            mae = mean_absolute_error(y_test_reg, preds)
-            metrics.append({'Model': name, 'Type': 'Regression', 'RMSE': rmse, 'MAE': mae})
+            preds = model.predict(X_test_tab)
+            rmse = np.sqrt(mean_squared_error(y_test_reg_tab, preds))
+            metrics.append({'Model': name, 'Type': 'Regression', 'RMSE': rmse})
         elif '_Cls' in name:
-            preds = model.predict(X_test)
-            acc = accuracy_score(y_test_cls, preds)
-            f1 = f1_score(y_test_cls, preds)
-            metrics.append({'Model': name, 'Type': 'Classification', 'Accuracy': acc, 'F1': f1})
-
-    # Evaluate Deep Learning
+            preds = model.predict(X_test_tab)
+            acc = accuracy_score(y_test_cls_tab, preds)
+            metrics.append({'Model': name, 'Type': 'Classification', 'Accuracy': acc})
+            
     for name, model in deep_models.items():
+        model.eval()
+        all_preds = []
+        test_dataset = TensorDataset(torch.tensor(X_test_seq).to(torch.float32), torch.tensor(y_test_reg_seq).to(torch.float32))
+        test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
+        
+        with torch.no_grad():
+            for batch_X, _ in test_loader:
+                batch_X = batch_X.to(device)
+                outputs = model(batch_X).cpu().numpy().flatten()
+                all_preds.extend(outputs)
+        
+        preds = np.array(all_preds)
         if '_Reg' in name:
-            preds = model.predict(X_test_seq).flatten()
             rmse = np.sqrt(mean_squared_error(y_test_reg_seq, preds))
-            mae = mean_absolute_error(y_test_reg_seq, preds)
-            metrics.append({'Model': name, 'Type': 'Regression', 'RMSE': rmse, 'MAE': mae})
+            metrics.append({'Model': name, 'Type': 'Regression', 'RMSE': rmse})
         elif '_Cls' in name:
-            preds = (model.predict(X_test_seq) > 0.5).astype(int).flatten()
-            acc = accuracy_score(y_test_cls_seq, preds)
-            f1 = f1_score(y_test_cls_seq, preds)
-            metrics.append({'Model': name, 'Type': 'Classification', 'Accuracy': acc, 'F1': f1})
+            preds_bin = (preds > 0.5).astype(int)
+            acc = accuracy_score(y_test_cls_seq, preds_bin)
+            metrics.append({'Model': name, 'Type': 'Classification', 'Accuracy': acc})
+    return pd.DataFrame(metrics)
 
-    metrics_df = pd.DataFrame(metrics)
-    
-    # Generate Plots
-    logger.info("  Generating plots...")
-    if not metrics_df.empty:
-        # Actual vs Predicted for Regression
-        reg_models = [m for m in metrics_df[metrics_df['Type'] == 'Regression']['Model']]
-        if reg_models:
-            plt.figure(figsize=(12, 6))
-            for name in reg_models[:3]: # Plot first 3 for clarity
-                if name in baseline_models:
-                    preds = baseline_models[name].predict(X_test)
-                elif name in deep_models:
-                    preds = deep_models[name].predict(X_test_seq).flatten()
-                plt.plot(y_test_reg[:200], label=f'Actual (Sample)', alpha=0.3 if 'pred' in locals() else 1.0)
-                plt.plot(preds[:200], label=f'{name} Prediction')
-            plt.title("Actual vs Predicted Close Price (Sample)")
-            plt.legend()
-            plt.savefig(os.path.join(REPORTS_DIR, "regression_comparison.png"))
-            plt.close()
+def safe_replace(tmp, target):
+    max_retries = 5
+    for i in range(max_retries):
+        try:
+            os.replace(tmp, target)
+            return True
+        except PermissionError:
+            if i < max_retries - 1:
+                time.sleep(0.5)
+                continue
+            raise
+    return False
 
-    return metrics_df
+def save_all_models(baseline_models, deep_models, metrics_df, input_dim):
+    logger.info("Saving all models for consensus...")
+    if not os.path.exists(MODELS_DIR): os.makedirs(MODELS_DIR)
+    
+    # Save specific types for ensembling
+    # 1. LSTM Reg
+    if 'LSTM_Reg' in deep_models:
+        torch.save({
+            'state_dict': deep_models['LSTM_Reg'].state_dict(),
+            'model_type': 'LSTM', 'input_dim': input_dim, 'task': 'regression'
+        }, os.path.join(MODELS_DIR, "btc_lstm_reg.pth"))
+    
+    # 2. Transformer Reg
+    if 'Transformer_Reg' in deep_models:
+        torch.save({
+            'state_dict': deep_models['Transformer_Reg'].state_dict(),
+            'model_type': 'Transformer', 'input_dim': input_dim, 'task': 'regression'
+        }, os.path.join(MODELS_DIR, "btc_trans_reg.pth"))
+        
+    # 3. XGBoost Reg
+    if 'XGB_Reg' in baseline_models:
+        with open(os.path.join(MODELS_DIR, "btc_xgb_reg.pkl"), 'wb') as f:
+            pickle.dump(baseline_models['XGB_Reg'], f)
 
-def save_best(baseline_models, deep_models, metrics_df):
-    """
-    Save best models and reports.
-    """
-    logger.info("Saving best models and reports...")
-    
-    # Save metrics csv
-    metrics_df.to_csv(os.path.join(REPORTS_DIR, "metrics.csv"), index=False)
-    
+    # 4. Standard "Best" targets for backward compatibility
     # Best Regression
     reg_metrics = metrics_df[metrics_df['Type'] == 'Regression'].sort_values('RMSE')
     if not reg_metrics.empty:
-        best_reg_name = reg_metrics.iloc[0]['Model']
-        logger.info(f"Best Regressor: {best_reg_name}")
-        
-        if best_reg_name in deep_models:
-            reg_path_h5 = os.path.join(MODELS_DIR, "btc_model_reg.h5")
-            reg_path_keras = os.path.join(MODELS_DIR, "btc_model_reg.keras")
-            deep_models[best_reg_name].save(reg_path_h5)
-            deep_models[best_reg_name].save(reg_path_keras)
-        elif best_reg_name in baseline_models:
+        best_name = reg_metrics.iloc[0]['Model']
+        if best_name in deep_models:
+            torch.save({
+                'state_dict': deep_models[best_name].state_dict(),
+                'model_type': 'LSTM' if 'LSTM' in best_name else 'Transformer',
+                'input_dim': input_dim, 'task': 'regression'
+            }, os.path.join(MODELS_DIR, "btc_model_reg.pth"))
+        else:
             with open(os.path.join(MODELS_DIR, "btc_model_reg.pkl"), 'wb') as f:
-                pickle.dump(baseline_models[best_reg_name], f)
-
+                pickle.dump(baseline_models[best_name], f)
+                 
     # Best Classification
     cls_metrics = metrics_df[metrics_df['Type'] == 'Classification'].sort_values('Accuracy', ascending=False)
     if not cls_metrics.empty:
-        best_cls_name = cls_metrics.iloc[0]['Model']
-        logger.info(f"Best Classifier: {best_cls_name}")
-        
-        if best_cls_name in deep_models:
-            cls_path_h5 = os.path.join(MODELS_DIR, "btc_model_cls.h5")
-            cls_path_keras = os.path.join(MODELS_DIR, "btc_model_cls.keras")
-            deep_models[best_cls_name].save(cls_path_h5)
-            deep_models[best_cls_name].save(cls_path_keras)
-        elif best_cls_name in baseline_models:
+        best_name = cls_metrics.iloc[0]['Model']
+        if best_name in deep_models:
+            torch.save({
+                'state_dict': deep_models[best_name].state_dict(),
+                'model_type': 'LSTM' if 'LSTM' in best_name else 'Transformer',
+                'input_dim': input_dim, 'task': 'classification'
+            }, os.path.join(MODELS_DIR, "btc_model_cls.pth"))
+        else:
             with open(os.path.join(MODELS_DIR, "btc_model_cls.pkl"), 'wb') as f:
-                pickle.dump(baseline_models[best_cls_name], f)
-
-    # ALWAYS Save Baseline Backups (Safety Net)
-    # This prevents dashboard crashes if DL models fail to load/predict
-    if 'RF_Reg' in baseline_models:
-        with open(os.path.join(MODELS_DIR, "btc_model_reg_baseline.pkl"), 'wb') as f:
-            pickle.dump(baseline_models['RF_Reg'], f)
-    
-    if 'XGB_Cls' in baseline_models:
-        with open(os.path.join(MODELS_DIR, "btc_model_cls_baseline.pkl"), 'wb') as f:
-            pickle.dump(baseline_models['XGB_Cls'], f)
-    if 'LR_Cls' in baseline_models and 'XGB_Cls' not in baseline_models: # Fallback if XGB failed
-         with open(os.path.join(MODELS_DIR, "btc_model_cls_baseline.pkl"), 'wb') as f:
-            pickle.dump(baseline_models['LR_Cls'], f)
+                pickle.dump(baseline_models[best_name], f)
 
 def main():
-    if not os.path.exists(MODELS_DIR): os.makedirs(MODELS_DIR)
-    if not os.path.exists(REPORTS_DIR): os.makedirs(REPORTS_DIR)
+    # Load config for global parameters
+    config = {}
+    if os.path.exists("config.yaml"):
+        with open("config.yaml", "r") as f:
+            config = yaml.safe_load(f)
     
-    report_progress(0.4, "Training Models", "Loading and preparing data...")
+    global WINDOW_SIZE
+    WINDOW_SIZE = config.get('params', {}).get('window_size', 180)
+    logger.info(f"Using Window Size: {WINDOW_SIZE} minutes")
+
+    report_progress(0.4, "Training Models", "Preparing data...")
     splits, feature_cols = load_and_prepare_data()
-    
-    report_progress(0.5, "Training Models", "Training Baseline Models (Random Forest, XGBoost)...")
     baseline_models = train_baselines(splits, feature_cols)
-    
-    report_progress(0.7, "Training Models", "Training Deep Learning Models (LSTM, Transformer)...")
     deep_models, seq_test = train_deep_models(splits, len(feature_cols))
-    
-    report_progress(0.9, "Training Models", "Evaluating all models...")
     metrics_df = evaluate(baseline_models, deep_models, splits, seq_test)
-    logger.info("\nFinal Metrics:\n" + metrics_df.to_string())
-    
-    save_best(baseline_models, deep_models, metrics_df)
-    logger.info("Model training and saving process completed.")
+    logger.info("\nMetrics:\n" + metrics_df.to_string())
+    save_all_models(baseline_models, deep_models, metrics_df, len(feature_cols))
+    # Cleanup any leftover pth.tmp or temp files
+    for f in os.listdir('.'):
+        if f.startswith('best_temp_') and f.endswith('.pth'):
+            try: os.remove(f)
+            except: pass
 
 if __name__ == "__main__":
     main()

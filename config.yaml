@@ -9,6 +9,34 @@ paths:
 params:
   symbol: "BTCUSDT"
   interval: "1m"
+  lookback_days: 2
+  window_size: 180
+  min_target_return: 0.001
   retrain_interval_minutes: 60
   dashboard_port: 8501
-  fresh_start: True
+  fresh_start: true
+
+sentiment:
+  keywords: ["Bitcoin", "BTC", "BTCUSDT", "crypto", "blockchain"]
+  sources:
+    rss:
+      enabled: true
+      feeds:
+        - "https://cointelegraph.com/rss"
+        - "https://www.coindesk.com/arc/outboundfeeds/rss/"
+        - "https://cryptopotato.com/feed/"
+        - "https://www.bloomberg.com/feeds/podcasts/etf-iq.xml"
+        - "https://www.investing.com/rss/news_285.rss"  # Investing.com Crypto News
+        - "https://www.fxstreet.com/rss/news/bitcoin"  # FXStreet Bitcoin News
+    twitter:
+      enabled: false
+      api_key: ""
+  thresholds:
+    negative_spike: -0.5
+  interval_seconds: 60
+
+signal_engine:
+  confidence_threshold: 0.60
+  max_spread: 15.0
+  min_imbalance: 0.15
+  persistence_file: "signals_v2.csv"

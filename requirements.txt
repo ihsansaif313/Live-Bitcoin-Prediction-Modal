@@ -1,3 +1,7 @@
+torch
+vaderSentiment
+langdetect
+feedparser
 pandas
 numpy
 matplotlib
@@ -12,3 +16,6 @@ streamlit
 plotly
 websocket-client
 certifi
+yfinance
+scipy
+

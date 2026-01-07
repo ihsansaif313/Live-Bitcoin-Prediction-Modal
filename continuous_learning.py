@@ -1,261 +1,170 @@
 """
-Bitcoin Continuous Learning Script
-Periodically updates dataset, retrains models, and handles inference.
+Bitcoin Continuous Learning Script (V2)
+Integrates drift detection (KS-test/PSI) and incremental model updates.
 """
 
 import os
 import time
 import logging
 import pickle
+import torch
 import datetime
 import numpy as np
 import pandas as pd
 import shutil
+import xgboost as xgb
+from datetime import timezone
 from typing import Dict, Any, Tuple
 
-# Re-use existing modules
-from build_dataset import make_features, fit_and_apply_scalers
+# Project modules
+import build_dataset
 from data_cleaner import detect_outliers, remove_noise
-try:
-    from train_models import train_baselines, train_deep_models, evaluate, make_sequences
-except ImportError:
-    # Use fallback if train_models is not fully importable due to structure
-    # But since we are in same dir, it should work.
-    pass
+from drift_detector import check_drift
+from train_models import (
+    train_baselines, train_deep_models, evaluate, 
+    load_and_prepare_data, save_all_models,
+    LSTMModel, TransformerModel, WINDOW_SIZE, MODELS_DIR
+)
 
 # Configure logging
+if not os.path.exists("logs"): os.makedirs("logs")
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("continuous_learning.log"),
+        logging.FileHandler("logs/continuous_learning.log"),
         logging.StreamHandler()
     ]
 )
 logger = logging.getLogger(__name__)
 
 # Constants
-LIVE_CANDLES_CSV = "btc_live_candles.csv"
 DATASET_CSV = "btc_dataset.csv"
-FEATURES_CSV = "btc_features_normalized.csv"
-SCALERS_FILE = "scalers.pkl"
-CHECKPOINTS_DIR = "models/checkpoints"
-CURRENT_MODELS_DIR = "models"
-RETRAIN_INTERVAL_CANDLES = 60  # Retrain every ~1 hour (60 minutes)
-POLL_INTERVAL_SECONDS = 60
+FEATURES_NORMALIZED_CSV = "btc_features_normalized.csv"
+DRIFT_THRESHOLD_KS = 0.05
+DRIFT_THRESHOLD_PSI = 0.2
+MONITOR_CSVS = ["btc_live_candles.csv", "sentiment_minute.csv", "orderbook_depth.csv", "macro_factors.csv"]
+POLL_INTERVAL_SECONDS = 300 # 5 minutes
 
-class ContinuousLearner:
+class ContinuousLearnerV2:
     def __init__(self):
-        self.last_processed_time = None
-        self.candles_since_retrain = 0
-        self.scalers = self._load_scalers()
+        self.last_retrain_time = datetime.datetime.now(timezone.utc)
+        self.reference_data = None # Baseline distribution
+        self.load_reference_data()
         
-    def _load_scalers(self):
+    def load_reference_data(self):
+        """Load the data used for initial training as a reference for drift."""
         try:
-            with open(SCALERS_FILE, 'rb') as f:
-                return pickle.load(f)
+            if os.path.exists(FEATURES_NORMALIZED_CSV):
+                df = pd.read_csv(FEATURES_NORMALIZED_CSV).iloc[:1000] # Use first 1000 rows as ref
+                self.reference_data = df
+                logger.info("Reference data loaded for drift detection.")
         except Exception as e:
-            logger.error(f"Failed to load scalers: {e}")
-            return None
+            logger.error(f"Failed to load reference data: {e}")
 
-    def load_new_candles(self) -> pd.DataFrame:
-        """
-        Check for new candles in btc_live_candles.csv.
-        """
+    def get_latest_weights(self):
+        """Load current best weights for warm-starting."""
+        weights = {}
         try:
-            if not os.path.exists(LIVE_CANDLES_CSV):
-                return pd.DataFrame()
-
-            df = pd.read_csv(LIVE_CANDLES_CSV)
-            df['timeOpen'] = pd.to_datetime(df['timeOpen'], utc=True)
-            
-            # Determine last processed time from dataset file if first run
-            if self.last_processed_time is None:
-                if os.path.exists(DATASET_CSV):
-                    existing = pd.read_csv(DATASET_CSV)
-                    existing['timeOpen'] = pd.to_datetime(existing['timeOpen'], utc=True)
-                    self.last_processed_time = existing['timeOpen'].max()
-                else:
-                    self.last_processed_time = pd.Timestamp.min.tz_localize('UTC')
-
-            # Filter new rows
-            new_data = df[df['timeOpen'] > self.last_processed_time]
-            
-            if not new_data.empty:
-                logger.info(f"Found {len(new_data)} new candles. Applying data_cleaner filters...")
-                # Apply Cleaning
-                new_data = detect_outliers(new_data)
-                new_data = remove_noise(new_data)
-                self.last_processed_time = new_data['timeOpen'].max()
-                logger.info("New data cleaned successfully.")
-                
-            return new_data
+            for task in ['reg', 'cls']:
+                pth_path = os.path.join(MODELS_DIR, f"btc_model_{task}.pth")
+                if os.path.exists(pth_path):
+                    checkpoint = torch.load(pth_path, map_location=torch.device('cpu'), weights_only=True)
+                    model_type = checkpoint.get('model_type')
+                    key = f"{model_type}_{task.capitalize()}"
+                    weights[key] = checkpoint['state_dict']
+            logger.info(f"Loaded {len(weights)} weight sets for warm-start.")
         except Exception as e:
-            logger.error(f"Error loading new candles: {e}")
-            return pd.DataFrame()
+            logger.error(f"Error loading weights: {e}")
+        return weights
 
-    def update_dataset_and_features(self, new_candles: pd.DataFrame):
-        """
-        Append new candles and update features/scalers.
-        """
-        if new_candles.empty:
+    def get_latest_baselines(self):
+        """Load latest XGBoost models for incremental boosting."""
+        models = {}
+        try:
+            for task in ['reg', 'cls']:
+                pkl_path = os.path.join(MODELS_DIR, f"btc_model_{task}.pkl")
+                if os.path.exists(pkl_path):
+                    with open(pkl_path, 'rb') as f:
+                        model = pickle.load(f)
+                        if isinstance(model, (xgb.XGBRegressor, xgb.XGBClassifier)):
+                            name = f"XGB_{task.capitalize()}"
+                            models[name] = model
+            logger.info(f"Loaded {len(models)} baseline models for incremental updates.")
+        except Exception as e:
+            logger.error(f"Error loading baselines: {e}")
+        return models
+
+    def run_cycle(self):
+        logger.info("Starting monitoring cycle...")
+        
+        # 1. Check for data updates and rebuild dataset
+        # In this implementation, we simply re-run build_dataset.main() 
+        # which smartly merges all newer rows from sentiment/candles/etc.
+        try:
+            build_dataset.main()
+            logger.info("Dataset and features refreshed.")
+        except Exception as e:
+            logger.error(f"Dataset build failed: {e}")
             return
 
-        # 1. Append to Dataset
-        if os.path.exists(DATASET_CSV):
-            new_candles.to_csv(DATASET_CSV, mode='a', header=False, index=False)
+        # 2. Check for Drift
+        if self.reference_data is not None:
+            try:
+                current_data = pd.read_csv(FEATURES_NORMALIZED_CSV).tail(500)
+                report, drift_count = check_drift(self.reference_data, current_data, DRIFT_THRESHOLD_KS, DRIFT_THRESHOLD_PSI)
+                
+                if drift_count > 3: # Threshold: Retrain if 3+ features showed drift
+                    logger.warning(f"SIGNIFICANT DRIFT DETECTED ({drift_count} features). Triggering retraining...")
+                    self.perform_incremental_retraining()
+                else:
+                    logger.info(f"Market stable. Drift detected in only {drift_count} features.")
+            except Exception as e:
+                logger.error(f"Drift detection failed: {e}")
         else:
-            new_candles.to_csv(DATASET_CSV, index=False)
-        
-        # 2. Regenerate Features
-        # We perform a full regeneration or load tail - for stability, full load is safer but slower.
-        # Optimized: Load last N rows + new rows to calculate features correctly
-        # But for 'build_dataset.py' re-use, we might just re-run parts of it.
-        # To match exact logic, we'll reload full dataset and regenerate.
-        # Optimization: In prod, we'd only compute tail.
-        
-        logger.info("Regenerating features for latest data...")
-        full_df = pd.read_csv(DATASET_CSV)
-        full_df['timeOpen'] = pd.to_datetime(full_df['timeOpen'], utc=True)
-        
-        # Calculate features (make_features handles lags/rolling)
-        features_df = make_features(full_df)
-        
-        # 3. Apply Scaling (Using EXISTING scalers, do not refit)
-        if self.scalers:
-            normalized_data = pd.DataFrame(index=features_df.index)
-            normalized_data['timeOpen'] = features_df['timeOpen']
-            
-            for col, scaler in self.scalers.items():
-                if col in features_df.columns:
-                    col_data = features_df[col].values.reshape(-1, 1)
-                    normalized_data[col] = scaler.transform(col_data)
-            
-            # Save normalized features
-            normalized_data.to_csv(FEATURES_CSV, index=False)
-            logger.info("Updated features file")
-        else:
-            logger.warning("No scalers found, skipping normalization update")
+            self.load_reference_data()
 
-    def retrain_models(self):
-        """
-        Retrain models on the updated dataset.
-        """
-        logger.info("Starting scheduled model retraining...")
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        checkpoint_dir = os.path.join(CHECKPOINTS_DIR, timestamp)
-        os.makedirs(checkpoint_dir, exist_ok=True)
-        
+    def perform_incremental_retraining(self):
+        logger.info("Initializing incremental retraining...")
         try:
-            # Re-import to get fresh state/data
-            from train_models import load_and_prepare_data, train_baselines, train_deep_models, evaluate, save_best
-            
+            # Prepare data
             splits, feature_cols = load_and_prepare_data()
             
-            # Baseline
-            baselines = train_baselines(splits, feature_cols)
+            # 1. Warm-start Deep Learning
+            weights = self.get_latest_weights()
+            deep_models, seq_test = train_deep_models(splits, len(feature_cols), existing_weights=weights)
             
-            # Deep Learning (will use Python environment capabilities)
-            deep_models, seq_test = train_deep_models(splits, len(feature_cols))
+            # 2. Incremental Baselines
+            baselines = self.get_latest_baselines()
+            baseline_results = train_baselines(splits, feature_cols, existing_models=baselines)
             
-            # Evaluate
-            metrics = evaluate(baselines, deep_models, splits, seq_test)
-            logger.info(f"Retraining Metrics:\n{metrics}")
+            # 3. Evaluation & Selection
+            metrics = evaluate(baseline_results, deep_models, splits, seq_test)
+            logger.info(f"Retraining complete. Metrics:\n{metrics}")
             
-            # Save to Checkpoints
-            save_best(baselines, deep_models, metrics)
+            # 4. Save best
+            save_all_models(baseline_results, deep_models, metrics, len(feature_cols))
             
-            # Copy best models to Current
-            for model_file in ["btc_model_reg.pkl", "btc_model_cls.pkl", "btc_model_reg.h5", "btc_model_cls.h5", "btc_model_reg.keras", "btc_model_cls.keras"]:
-                src = os.path.join(CURRENT_MODELS_DIR, model_file)
-                if os.path.exists(src):
-                    dst = os.path.join(checkpoint_dir, model_file)
-                    shutil.copy2(src, dst)
-                    logger.info(f"Checkpointed {model_file} to {checkpoint_dir}")
-            
-            logger.info("Retraining complete.")
+            # Update reference data to the new regime
+            self.reference_data = pd.read_csv(FEATURES_NORMALIZED_CSV).tail(1000)
+            self.last_retrain_time = datetime.datetime.now(timezone.utc)
+            logger.info("Models updated and regime reference reset.")
             
         except Exception as e:
-            logger.error(f"Retraining failed: {e}", exc_info=True)
-
-    def predict_next(self) -> Dict[str, Any]:
-        """
-        Inference function: Predict next 15-minute close and direction.
-        """
-        try:
-            # Load latest features
-            df = pd.read_csv(FEATURES_CSV)
-            if df.empty: return {}
-            
-            # Tail needs to be long enough for deep learning window
-            # Assuming WINDOW_SIZE=60 from train_models
-            window_size = 60
-            if len(df) < window_size:
-                logger.warning("Not enough data for inference")
-                return {}
-            
-            # Prepare input
-            feature_cols = [c for c in df.columns if c != 'timeOpen']
-            
-            # 1. Baseline Prediction (using last row)
-            last_row = df.iloc[-1][feature_cols].values.reshape(1, -1)
-            
-            # Load current price from candles or dataset to reconstruct
-            current_price = 0
-            if os.path.exists(DATASET_CSV):
-                c_df = pd.read_csv(DATASET_CSV)
-                if not c_df.empty:
-                    current_price = c_df.iloc[-1]['close']
-            
-            baseline_result = {}
-            reg_path = os.path.join(CURRENT_MODELS_DIR, "btc_model_reg.pkl")
-            if os.path.exists(reg_path) and current_price > 0:
-                with open(reg_path, 'rb') as f:
-                    model = pickle.load(f)
-                    predicted_return = model.predict(last_row)[0]
-                    baseline_result['predicted_close'] = float(current_price * (1 + predicted_return))
-            
-            if 'predicted_close' in baseline_result:
-                baseline_result['predicted_direction'] = "UP" if baseline_result['predicted_close'] > current_price else "DOWN"
-
-            return baseline_result
-            
-        except Exception as e:
-            logger.error(f"Inference failed: {e}")
-            return {}
+            logger.error(f"Retraining cycle failed: {e}", exc_info=True)
 
     def run(self):
-        """
-        Main loop.
-        """
-        logger.info("Starting Continuous Learning Service...")
+        logger.info("Continuous Learning Service Active.")
         while True:
             try:
-                # 1. Data Update
-                new_candles = self.load_new_candles()
-                if not new_candles.empty:
-                    self.update_dataset_and_features(new_candles)
-                    self.candles_since_retrain += len(new_candles)
-                    
-                    # 2. Inference
-                    prediction = self.predict_next()
-                    if prediction:
-                        logger.info(f"LATEST PREDICTION: {prediction}")
-                
-                # 3. Retraining Check
-                if self.candles_since_retrain >= RETRAIN_INTERVAL_CANDLES:
-                    self.retrain_models()
-                    self.candles_since_retrain = 0
-                
+                self.run_cycle()
                 time.sleep(POLL_INTERVAL_SECONDS)
-                
             except KeyboardInterrupt:
-                logger.info("Stopping service...")
                 break
             except Exception as e:
-                logger.error(f"Loop error: {e}", exc_info=True)
-                time.sleep(POLL_INTERVAL_SECONDS)
+                logger.error(f"Fatal error in loop: {e}")
+                time.sleep(60)
 
 if __name__ == "__main__":
-    learner = ContinuousLearner()
-    learner.run()
+    service = ContinuousLearnerV2()
+    service.run()

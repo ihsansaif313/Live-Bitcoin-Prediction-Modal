@@ -29,11 +29,23 @@ def load_config():
     with open("config.yaml", "r") as f:
         return yaml.safe_load(f)
 
+def get_python_executable():
+    """Get the path to the python executable, preferring venv if it exists."""
+    if os.name == 'nt': # Windows
+        venv_python = os.path.join(os.getcwd(), "venv", "Scripts", "python.exe")
+    else: # Unix/Linux
+        venv_python = os.path.join(os.getcwd(), "venv", "bin", "python")
+    
+    if os.path.exists(venv_python):
+        return venv_python
+    return sys.executable
+
 def run_step(script_name: str, description: str):
     """Run a script synchronously and wait for completion."""
     logger.info(f"Running Step: {description} ({script_name})...")
+    python_exe = get_python_executable()
     try:
-        subprocess.check_call([sys.executable, script_name])
+        subprocess.check_call([python_exe, script_name])
         logger.info(f"Step {description} completed successfully.")
     except subprocess.CalledProcessError as e:
         logger.error(f"Step {description} failed with return code {e.returncode}")
@@ -99,6 +111,9 @@ def cleanup_data(config: Dict):
         "btc_features.csv",
         "btc_features_normalized.csv",
         "scalers.pkl",
+        "sentiment_events.csv",
+        "sentiment_minute.csv",
+        "orderbook_depth.csv",
         os.path.join("reports", "metrics.csv"),
         os.path.join("reports", "backtest_summary.csv"),
         os.path.join("reports", "evaluation_metrics.csv"),
@@ -169,13 +184,31 @@ def run_setup_sequence(config: Dict):
         # 1. Historical Data
         dataset_path = config['paths']['dataset']
         if not os.path.exists(dataset_path):
-            update_status("running", 0.1, "Downloading Historical Data", "Fetching 6 months of OHLC data (this may take several minutes)...")
-            run_step("historical_data.py", "Download Historical Data")
+            lookback_days = config.get('params', {}).get('lookback_days', 365)
+            symbol = config.get('params', {}).get('symbol', 'BTCUSDT')
+            hist_path = config['paths']['historical_data']
+            
+            update_status("running", 0.1, "Downloading Historical Data", f"Fetching {lookback_days} days of OHLC data...")
+            
+            def hist_progress(pct, candle):
+                print(f" >>> Historical Download: {pct:.1f}% | Last: {candle}", flush=True)
+
+            try:
+                from historical_data import collect_historical_data, save_csv
+                df = collect_historical_data(symbol=symbol, interval="1m", lookback_days=lookback_days, progress_callback=hist_progress)
+                save_csv(df, hist_path)
+            except Exception as e:
+                logger.error(f"Historical Download Failed: {e}")
+                run_step("historical_data.py", "Download Historical Data")
             
             # New Step: Data Cleaning
             update_status("running", 0.2, "Cleaning Data", "Detecting outliers and removing noise...")
             from data_cleaner import clean_historical_data
             clean_historical_data(config['paths']['historical_data'], config['paths']['historical_data_clean'])
+            
+            # New Step: Macro Bootstrap
+            update_status("running", 0.25, "Fetching Macro Context", "Downloading 1 year of SPX and DXY history...")
+            run_step("macro_factors.py --bootstrap 365", "Bootstrap Macro History")
             
             update_status("running", 0.3, "Building Dataset", "Generating technical indicators and features...")
             run_step("build_dataset.py", "Build Initial Dataset")
@@ -209,12 +242,18 @@ def main():
     # Reset status file
     update_status("running", 0.0, "Initializing", "Starting Orchestrator...")
 
+    python_exe = get_python_executable()
+    
     # 1. Start Dashboard IMMEDIATELY
-    streamlit_cmd = [sys.executable, "-m", "streamlit", "run", "btc_dashboard.py"]
-    p_dash = start_process(
+    streamlit_cmd = [python_exe, "-m", "streamlit", "run", "binance_dashboard.py"]
+    env = os.environ.copy()
+    env["ORCHESTRATOR_RUNNING"] = "1"
+    p_dash = subprocess.Popen(
         streamlit_cmd,
-        "Dashboard",
-        f"{logs_dir}/dashboard.log"
+        stdout=open(f"{logs_dir}/dashboard.log", "a"),
+        stderr=subprocess.STDOUT,
+        cwd=os.getcwd(),
+        env=env
     )
     processes.append(p_dash)
 
@@ -242,7 +281,7 @@ def main():
     try:
         # 4. Start Live Stream
         p_stream = start_process(
-            [sys.executable, "live_stream.py"],
+            [python_exe, "live_stream.py"],
             "Live Stream",
             f"{logs_dir}/live_stream.log"
         )
@@ -251,7 +290,7 @@ def main():
         
         # 5. Start Aggregator
         p_agg = start_process(
-            [sys.executable, "aggregate_live_to_candles.py"],
+            [python_exe, "aggregate_live_to_candles.py"],
             "Aggregator",
             f"{logs_dir}/aggregator.log"
         )
@@ -259,11 +298,27 @@ def main():
         
         # 6. Start Continuous Learner
         p_brain = start_process(
-            [sys.executable, "continuous_learning.py"],
+            [python_exe, "continuous_learning.py"],
             "Continuous Learner",
             f"{logs_dir}/learner.log"
         )
         processes.append(p_brain)
+
+        # 7. Start Sentiment Ingest
+        p_sent = start_process(
+            [python_exe, "sentiment_ingest.py"],
+            "Sentiment Ingest",
+            f"{logs_dir}/sentiment_ingest.log"
+        )
+        processes.append(p_sent)
+
+        # 8. Start Orderbook Depth
+        p_depth = start_process(
+            [python_exe, "orderbook_depth.py"],
+            "Orderbook Depth",
+            f"{logs_dir}/orderbook_depth.log"
+        )
+        processes.append(p_depth)
         
         logger.info("All services started. Press Ctrl+C to shutdown.")
         
